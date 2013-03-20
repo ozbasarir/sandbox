@@ -1,0 +1,5 @@
+block content
+  {{owners | json}}
+  div(ng-repeat='owner in owners')
+    h2 {{owner.name.first}}
+    p {{owner.email}}

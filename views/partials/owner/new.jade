@@ -1,0 +1,22 @@
+block content
+  .container
+    .row.span3.offset4.well.well-large
+      .div(ng-form name="regfrm")
+        .control-group
+          .controls
+            input.input-med(ng-model='registrationForm.name', required, type="text", placeholder='Name', name="name")
+            span.help-inline(ng-show='regfrm.name.$valid'): i.icon-ok
+        .control-group
+          .controls
+            input.input-med(ng-model='registrationForm.email', required, type="email", placeholder='Email', name="email")
+            span.help-inline(ng-show='regfrm.email.$valid'): i.icon-ok
+        .control-group
+          .controls
+            input.input-med(ng-model='registrationForm.password', required, type='password', placeholder='Password', name="password")
+            span.help-inline(ng-show='regfrm.password.$valid'): i.icon-ok
+        button.btn.btn-large.btn-block.btn-primary(ng-click='registerOwner()', ng-disabled='!regfrm.$valid') Register
+      pre registrationForm= {{registrationForm | json}}
+      pre owner.name= {{regfrm.name.$valid}}
+      pre owner.email= {{regfrm.email.$valid}}
+      pre owner.password= {{regfrm.password.$valid}}
+      pre owner form = {{regfrm.$valid}}
