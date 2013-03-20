@@ -16,3 +16,4 @@ settings.js
 app.js
 myNotes.txt
 node_modules
+.DS_Store
