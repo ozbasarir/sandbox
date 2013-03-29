@@ -8,6 +8,22 @@ exports.index = function(req, res){
     settings: settings
   });
 };
+// 
+// exports.login = function(req, res){
+//   if(req.session.user) {
+//     res.redirect('/');
+//   } else {
+//     res.render('partials/owner/login', {
+//       settings: settings
+//     });
+//   }
+// };
+
+exports.serverLogout = function(req, res){
+  req.session.destroy(function(){
+    return res.redirect('/');
+  });
+}
 
 exports.partials = function(req, res){
   res.render('partials/' + req.params.module + '/' + req.params.partial, {
@@ -66,6 +82,8 @@ function startUserSession(user, req, fn) {
     req.session.success = 'Authenticated as ' + user.name
       + ' click to <a href="/logout">logout</a>. '
       + ' You may now access <a href="/restricted">/restricted</a>.';
+console.log("in startUserSession with: "+user.name);
+
     fn();
   });
 }
@@ -74,7 +92,7 @@ exports.janrainToken = function(req, res, next) {
   var token = req.body.token;
   
   if(token.length < 1) {
-    res.redirect('/partials/owner/partial/login');
+    return res.redirect('/partials/owner/partial/login');
   }
   
   var rpx_post = querystring.stringify({
@@ -104,7 +122,8 @@ exports.janrainToken = function(req, res, next) {
           userObj = user.toObject();
           if(userObj.third_party_id) {
             startUserSession(userObj, req, function(){
-              res.redirect('partials/owner/partial/index');
+console.log("redirecting to dashboard");
+              res.redirect('/');//maps to owner's index
             });
           }
         } else {
@@ -116,7 +135,8 @@ exports.janrainToken = function(req, res, next) {
             } else {
               userObj = new_user.toObject();
               startUserSession(userObj, req, function(){
-                res.redirect('/partials/owner/partial/list');
+console.log("redirecting to /owners");
+                res.redirect('/owners');
               });
             }
           });
@@ -143,3 +163,4 @@ exports.janrainToken = function(req, res, next) {
 // }
 //   Using the return value, sign the user in with the 'identifier' param in the response.
 }
+

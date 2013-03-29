@@ -15,13 +15,24 @@ exports.list = function(req, res, next){
 };
 
 exports.view = function(req, res, next) {
-  Owner.findById( req.params.id, function (err, owner){
-    //If owner is not logged in user or an admin, don't show this
-    // if( owner.id !== req.cookies.user_id ){
-    //   return res.json(false); //OR utils.forbidden( res );??????
-    // }
-    res.json(owner);    
-  });
+  if('myself' == req.params.id) {
+
+    if(req.session.user) {
+      return res.json(req.session.user);
+    }
+    
+    return next(new Error("User not authenticated"));
+    
+  } else {
+
+    Owner.findById( req.params.id, function (err, owner){
+      //If owner is not logged in user or an admin, don't show this
+      // if( owner.id !== req.cookies.user_id ){
+      //   return res.json(false); //OR utils.forbidden( res );??????
+      // }
+      return res.json(owner);    
+    });
+  }
 };
 
 exports.add = function(req, res, next) {
