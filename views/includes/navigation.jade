@@ -1,0 +1,28 @@
+block prepend content
+  .navbar.navbar-inverse.navbar-fixed-top
+    .navbar-inner
+      .container
+        button.btn.btn-navbar(data-toggle="collapse",data-target=".nav-collapse")
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        a.brand(ng-href="#")
+          span RENTAL MANAGER
+        .nav-collapse.collapse
+          ul.nav
+            li: a(ng-href="/reservations") Reservations
+            li: a(ng-href="/property/properties") Rentals
+            li.dropdown
+              a.dropdown-toggle(ng-href="#", data-toggle="dropdown") Dropdown
+                b.caret
+              ul.dropdown-menu
+                li: a(ng-href="#") Contact
+                li.divider
+                li.nav-header: Nav header
+                li: a(ng-href="#") About
+                li(ng-show="!loggedIn"): a(ng-href="/login") Login
+                li(ng-show="loggedIn"): a(ng-href="/logout") Logout
+  .container
+    //.hero-unit BANNER IMAGE GOES HERE
+    .row-fluid
+      .span12

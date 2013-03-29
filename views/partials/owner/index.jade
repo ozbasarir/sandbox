@@ -1,7 +1,5 @@
-block content
-  h2 {{owner.name.first}}
-  p {{owner.email}}
-
-  div: span and start managing your rental
-
-//- p: a(href='/owner/logout') LOGOUT
+.div(ng-controller="IndexCtrl")
+  include ../../../views/includes/navigation
+  .container
+    .row(ng-show="loggedIn").span3.offset4.well.well-large
+      span {{owner.name}}

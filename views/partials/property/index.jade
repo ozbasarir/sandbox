@@ -1,0 +1,31 @@
+.container(ng-controller="PropertyCtrl")
+  include ../../../views/includes/navigation
+  .row.well
+    .span2
+      .control-group
+        .controls
+          img.rental(ng-src="{{mainImageUrl}}")
+    .span3
+      .control-group
+        .controls
+          label.strong() Rental Unit:
+          input.input-med(ng-model='property.name', 
+                          ng-change="update();",
+                          type="text", 
+                          placeholder='Name', 
+                          id="pname")
+  .row.well(id="property_details")
+    .span3
+      .control-group
+        .controls.input-prepend
+          label.control-label() Nightly Rate
+          .btn-group
+            button.btn() {{currencySign}}
+            button.btn.dropdown-toggle(data-toggle="dropdown")
+              span.caret
+            ul.dropdown-menu
+              li(ng-click="updateNightlyRateCurrency('dollar')") 
+                a(href="#"): &nbsp; &dollar; Dollars
+              li(ng-click="updateNightlyRateCurrency('euro')") 
+                a(href="#"): &nbsp; &euro; Euros
+          input.input-med(ng-model='property.nightlyRate.amount', ng-change="update()", type="text")
