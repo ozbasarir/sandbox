@@ -14,18 +14,43 @@
                           type="text", 
                           placeholder='Name', 
                           id="pname")
-  .row.well(id="property_details")
-    .span3
-      .control-group
-        .controls.input-prepend
-          label.control-label() Nightly Rate
-          .btn-group
-            button.btn() {{currencySign}}
-            button.btn.dropdown-toggle(data-toggle="dropdown")
-              span.caret
-            ul.dropdown-menu
-              li(ng-click="updateNightlyRateCurrency('dollar')") 
-                a(href="#"): &nbsp; &dollar; Dollars
-              li(ng-click="updateNightlyRateCurrency('euro')") 
-                a(href="#"): &nbsp; &euro; Euros
-          input.input-med(ng-model='property.nightlyRate.amount', ng-change="update()", type="text")
+  accordion(close-others="oneAtATime")
+    accordion-group(heading="Rates")
+      .row.well(id="property_rates")
+        .span3
+          .control-group(ng-repeat="rate in property.rates")
+            .controls.input-prepend
+              label.control-label() {{rate.type}}
+              .btn-group
+                button.btn() {{currencySigns[rate.currency]}}
+                button.btn.dropdown-toggle(data-toggle="dropdown")
+                  span.caret
+                ul.dropdown-menu
+                  li.dropdown(ng-click="updateRateCurrency(rate, 'dollar')")
+                    a: &nbsp; &dollar; Dollars
+                  li.dropdown(ng-click="updateRateCurrency(rate, 'euro')")
+                    a: &nbsp; &euro; Euros
+              ul.dropdown-menu
+                li.dropdown(ng-click="updateRateCurrency(rate, 'dollar')")
+              input.input-small(ng-model='rate.amount', type="text")
+              label.control-label() &nbsp;From
+              input.input-small(type="text", ng-model="from_month")
+              input.input-small(type="text", ng-model="from_day")
+              label.control-label() &nbsp;To
+              input.input-small(type="text", ng-model="to_month")
+              input.input-small(type="text", ng-model="to_day")
+              button.close: &times;
+          .row
+            .btn-group
+              button.btn.dropdown-toggle(data-toggle="dropdown") Add 
+                span.caret
+              ul.dropdown-menu
+                li.dropdown(ng-click="addAnotherRate(rateType)", ng-repeat="rateType in rentalRateTypes") 
+                  a: {{rateType}}
+    accordion-group(heading="Contracts")
+      .row.well(id="property_contracts")
+        .span3
+          .control-group
+            .controls
+              label.strong() Contract:
+              input.input-med(ng-model='property.contracts.name')

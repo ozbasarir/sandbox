@@ -82,7 +82,6 @@ function startUserSession(user, req, fn) {
     req.session.success = 'Authenticated as ' + user.name
       + ' click to <a href="/logout">logout</a>. '
       + ' You may now access <a href="/restricted">/restricted</a>.';
-console.log("in startUserSession with: "+user.name);
 
     fn();
   });

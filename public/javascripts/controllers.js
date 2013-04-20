@@ -29,6 +29,9 @@ function OwnerLogoutCtrl($scope, $http, $location) {
 }
 
 function OwnerListCtrl($scope, $http, $location) {
+  if(!$scope.loggedIn) {
+    $location.path('/login');
+  }
   $http.get('/api/owners').
     success(function(data) {
       $scope.owners = data;
@@ -36,6 +39,9 @@ function OwnerListCtrl($scope, $http, $location) {
 }
 
 function PropertyListCtrl($scope, $http, $location) {
+  if(!$scope.loggedIn) {
+    $location.path('/login');
+  }
   $http.get('/api/properties').
     success(function(data) {
       $scope.properties = data;
@@ -43,20 +49,41 @@ function PropertyListCtrl($scope, $http, $location) {
 }
 
 function PropertyCtrl($scope, $routeParams, $location, Property) {
+  if(!$scope.loggedIn) {
+//    return $location.path('/login');
+  }
+  $scope.oneAtATime = true;
 //  $scope.currencies = ['&dollar;', '&euro;'];
-  $scope.property = Property.get({id: $routeParams.id}, function(property) {
-    if(property.images){
-      $scope.mainImageUrl = property.images[0];
-    } else {
-      $scope.mainImageUrl = "http://www.macupdate.com/util/iconlg/45342.png";
-    }
+  $scope.rentalRateTypes = ['Nightly', 'Weekly'];
+  $scope.days = ['1','2','3','4'];
+  $scope.months = ['1','2','3','4','5','6','7'];
+  $scope.from_month = undefined;
+  $scope.from_day = undefined;
+  $scope.to_month = undefined;
+  $scope.to_day = undefined;
 
-    if(!property.nightlyRate) {
-      property.nightlyRate = {currency: "dollar"};
-    }
+  $scope.property = Property.get({id: $routeParams.id}, 
+    function(property) {
+      if(property.images){
+        $scope.mainImageUrl = property.images[0];
+      } else {
+        $scope.mainImageUrl = "http://www.macupdate.com/util/iconlg/45342.png";
+      }
+
+      if(typeof property.rates == 'undefined') {
+        property.rates = [{type: 'Nightly', 
+                           startDate: null,
+                           endDate: null,
+                           currency: "dollar",
+                           amount: 0,
+                           }];
+      }
     
-    $scope.currencySign = (property.nightlyRate.currency == 'dollar') ? '$' : '€';
-  });
+      $scope.currencySigns = {'dollar':'$', 'euro': '€'};
+    },
+    function(data, status, headers, config) {//error callback
+      $location.path('/login');
+    });
 
    $scope.setImage = function(imageUrl) {
      $scope.mainImageUrl = imageUrl;
@@ -70,19 +97,38 @@ function PropertyCtrl($scope, $routeParams, $location, Property) {
         }
       }
       
-      $scope.property.$save(function(savedProperty, putResponseHeaders) {
-        //if property object is new, we should redirect to /property/newid after save.    
-        $location.path('/property/'+ savedProperty._id).replace();
-      });
+      $scope.property.$save(
+        function(savedProperty, putResponseHeaders) {
+          //if property object is new, we should redirect to /property/newid after save.    
+          $location.path('/property/'+ savedProperty._id).replace();
+        },
+        function(data, status, headers, config) {//error callback
+          $location.path('/login');
+        });
     }
   };
   
-  $scope.updateNightlyRateCurrency = function($currency) {
-    $scope.property.nightlyRate.currency = $currency;
+  $scope.updateRateCurrency = function($rate, $currency) {
+    $rate.currency = $currency;
     if($scope.property.name){
-      $scope.property.$save();
+
+      $scope.property.$save(
+        function(savedProperty, putResponseHeaders) {
+        },
+        function(data, status, headers, config) {//error callback
+
+          $location.path('/login');
+        });
     }
-    $scope.currencySign = ($currency == 'dollar') ? '$' : '€';
+  }
+  
+  $scope.addAnotherRate = function($rateType) {
+    $scope.property.rates.push({type: $rateType, 
+                           startDate: new Date(),
+                           endDate: new Date(),
+                           currency: "dollar",
+                           amount: 0,
+                           });
   }
 }
 

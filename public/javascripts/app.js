@@ -1,7 +1,7 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var rentalApp = angular.module('rentalApp', ['rentalApp.filters', 'rentalApp.services', 'rentalApp.directives']).
+var rentalApp = angular.module('rentalApp', ['ui.bootstrap', 'rentalApp.filters', 'rentalApp.services', 'rentalApp.directives']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.
       when('/', {
