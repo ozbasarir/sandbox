@@ -1,23 +1,21 @@
-var Owner = require('../models/Owner').Owner;
-var querystring = require('querystring')
+var User = require('../models/User').User
+  , addNewUser = require('../routes/user').save
+  , querystring = require('querystring')
   , https = require('https')
   , settings= require('../settings');
 
 exports.index = function(req, res){
-  res.render('index', {
-    settings: settings
-  });
+  if(req.session.user) {
+    res.render('index', {
+      settings: settings
+    });
+  } else {
+    res.render('public', {
+      settings: settings,
+      token_url: req.protocol+'://'+req.host+settings.rpx.token_url
+    });
+  }
 };
-// 
-// exports.login = function(req, res){
-//   if(req.session.user) {
-//     res.redirect('/');
-//   } else {
-//     res.render('partials/owner/login', {
-//       settings: settings
-//     });
-//   }
-// };
 
 exports.serverLogout = function(req, res){
   req.session.destroy(function(){
@@ -32,46 +30,9 @@ exports.partials = function(req, res){
 };
 
 function authenticateWithRpxId(rpx_identifier, fn) {
-  Owner.findOne({'third_party_id': rpx_identifier}, function(err, owner){
-    fn(err, owner);
+  User.findOne({'third_party_id': rpx_identifier}, function(err, user){
+    fn(err, user);
   });
-}
-
-function addNewUser(userData, fn) {
-  var name = userData.profile.name.formatted;
-  var first = '', last = '';
-  
-  nameParts = name.split();
-  if(nameParts.length > 1) {
-    last = nameParts[nameParts.length-1];
-    first = nameParts.slice(0, -1).toSource();
-  } else {
-    first = name;
-  }
-
-  if(userData.profile.verifiedEmail) {
-    var email = userData.profile.verifiedEmail;
-  } else if(userData.profile.email) {
-    var email = userData.profile.email;
-  } else {
-    return fn("No email. Cannot create owner.", null);
-  }
-  
-  new Owner({
-    name: {
-      first: first,
-      last: last
-    },
-    email: email,
-    third_party_id: userData.profile.identifier,
-  }).save( function (err, owner, count) {
-    if (err) { 
-      console.error(err);
-      fn(err, null);
-    }
-
-    fn(null, owner);
-  });  
 }
 
 function startUserSession(user, req, fn) {
@@ -81,7 +42,7 @@ function startUserSession(user, req, fn) {
     req.session.user = user;
     req.session.success = 'Authenticated as ' + user.name
       + ' click to <a href="/logout">logout</a>. '
-      + ' You may now access <a href="/restricted">/restricted</a>.';
+      + ' You may now access <a href="/">restricted</a> pages.';
 
     fn();
   });
@@ -91,7 +52,7 @@ exports.janrainToken = function(req, res, next) {
   var token = req.body.token;
   
   if(token.length < 1) {
-    return res.redirect('/partials/owner/partial/login');
+    return res.redirect('/public');
   }
   
   var rpx_post = querystring.stringify({
@@ -122,7 +83,7 @@ exports.janrainToken = function(req, res, next) {
           if(userObj.third_party_id) {
             startUserSession(userObj, req, function(){
 console.log("redirecting to dashboard");
-              res.redirect('/');//maps to owner's index
+              res.redirect('/');//maps to user's index
             });
           }
         } else {
@@ -134,8 +95,8 @@ console.log("redirecting to dashboard");
             } else {
               userObj = new_user.toObject();
               startUserSession(userObj, req, function(){
-console.log("redirecting to /owners");
-                res.redirect('/owners');
+console.log("redirecting to user's dashboard");
+                res.redirect('/');
               });
             }
           });

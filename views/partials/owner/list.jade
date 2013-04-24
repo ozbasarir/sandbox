@@ -1,9 +1,0 @@
-.div(ng-controller="OwnerListCtrl")
-  include ../../../views/includes/navigation
-  .container
-    p
-      {{user | json}}
-      {{owners | json}}
-      div(ng-repeat='owner in owners')
-        h2 {{owner.name.first}}
-        p {{owner.email}}

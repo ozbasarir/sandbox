@@ -1,0 +1,73 @@
+!!!
+//if lt IE 7
+  html.no-js.ie6.oldie(lang='en')
+//if IE 7
+  html.no-js.ie7.oldie(lang='en')
+//if IE 8
+  html.no-js.ie8.oldie(lang='en')
+//[if gt IE 8]><!
+html.no-js(lang='en')
+  //<![end if]
+  meta(charset='utf8')
+  meta(http-equiv='X-UA-Compatible',content='IE=edge,chrome=1')
+  meta(name='viewport',content='width=device-width, initial-scale=1.0')
+  base(href='/')
+  title Rental Manager
+  link(rel='stylesheet', href='/libs/foundation-4.1.2/css/normalize.css')
+  link(rel='stylesheet', href='/libs/foundation-4.1.2/css/foundation.min.css')
+  link(rel='stylesheet', href='/stylesheets/style.css')
+  script(src="/libs/foundation-4.1.2/js/vendor/custom.modernizr.js")
+  // Fav and touch icons
+  link(rel="apple-touch-icon-precomposed", sizes="144x144", href="/images/apple-touch-icon-144-precomposed.png")
+  link(rel="apple-touch-icon-precomposed", sizes="114x114", href="/images/apple-touch-icon-114-precomposed.png")
+  link(rel="apple-touch-icon-precomposed", sizes="72x72", href="/images/apple-touch-icon-72-precomposed.png")
+  link(rel="apple-touch-icon-precomposed", href="/images/apple-touch-icon-57-precomposed.png")
+  link(rel="shortcut icon", href="/images/favicon.png")
+  script(type="text/javascript")
+    (function() {
+        if (typeof window.janrain !== 'object') window.janrain = {};
+        if (typeof window.janrain.settings !== 'object') window.janrain.settings = {};
+
+        janrain.settings.tokenUrl = '#{token_url}';
+
+        function isReady() { janrain.ready = true; };
+        if (document.addEventListener) {
+          document.addEventListener("DOMContentLoaded", isReady, false);
+        } else {
+          window.attachEvent('onload', isReady);
+        }
+
+        var e = document.createElement('script');
+        e.type = 'text/javascript';
+        e.id = 'janrainAuthWidget';
+
+        if (document.location.protocol === 'https:') {
+          e.src = 'https://rpxnow.com/js/lib/rentalmgr/engage.js';
+        } else {
+          e.src = 'http://widget-cdn.rpxnow.com/js/lib/rentalmgr/engage.js';
+        }
+
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(e, s);
+    })();
+
+  body.antialiased
+    .contain-to-grid.sticky
+      nav.top-bar
+        ul.title-area
+          li.name
+            h1 RENTAL MANAGER
+    .row
+      .large-1.columns
+        div: &nbsp;
+    .row
+      .large-6.large-offset-4.columns
+        div(id="janrainEngageEmbed")
+
+    script(src="/libs/foundation-4.1.2/js/vendor/jquery.js")
+    //script(src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
+    // script(src="/libs/foundation-4.1.2/js/foundation.min.js")
+    script(src="/libs/foundation-4.1.2/js/foundation/foundation.js")
+    script(src="/libs/foundation-4.1.2/js/foundation/foundation.topbar.js")
+    script(type="text/javascript")
+      $(document).foundation();

@@ -4,7 +4,7 @@ var assert = require("assert"),
     mongoose = require('mongoose'),
     settings = require('../settings'),
     Property = require('../models/Property').Property, 
-    Owner = require('../models/Owner').Owner;
+    User = require('../models/User').User;
 
 describe('models', function() {
   beforeEach(function() {
@@ -19,14 +19,14 @@ describe('models', function() {
     });
     return it('save() should create a new rental', function(done) {
 
-      Owner.findById('5143ca018b7149aa44000001', function (err, owner) {
+      User.findById('5143ca018b7149aa44000001', function (err, user) {
 
         var rental;
         rental = new Property({
           name: 'studiom'
         });
 
-        rental.owner = owner._id;
+        rental.user = user._id;
         
         var startDate = new Date(2015, 10, 15);
         var endDate = new Date(2015, 10, 17);

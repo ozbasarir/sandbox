@@ -2,56 +2,88 @@
 
 /* Controllers */
 
-function IndexCtrl($scope, $routeParams, $location, Owner) {
-  $scope.loggedIn = false;
-  $scope.owner = Owner.get({id: 'myself'}, 
-    function(owner) {//success callback
-      if(owner) {
-        $scope.loggedIn = true;
-      }
-    },
-    function(data, status, headers, config) {//error callback
-      $location.path('/login');
-    });
+function IndexCtrl($scope, $rootScope) {
+  $scope.user = $rootScope.user;
+  $scope.loggedIn = $rootScope.loggedIn;//which should be 'true' here regardless.
 }
 
-function OwnerLoginCtrl($scope, $http, $location) {
-  $scope.loggedIn = false;
-  janrain.engage.signin.widget.init();//Without this the widget gets hidden with a display:none;
-}
-
-function OwnerLogoutCtrl($scope, $http, $location) {
-  $scope.loggedIn = false;
-  $scope.owner = null;
-   
-  $http.get('/server_logout');
-  $location.path('/login').replace();
-}
-
-function OwnerListCtrl($scope, $http, $location) {
-  if(!$scope.loggedIn) {
-    $location.path('/login');
+IndexCtrl.resolve = {
+  user: function($q, $rootScope, $window, User) {
+    if($rootScope.loggedIn) {
+      return true;
+    }
+    
+    var deferred = $q.defer();
+    
+    User.get({id: 'myself'}, 
+      function(user) {//success callback
+        $rootScope.loggedIn = true;
+        $rootScope.user = user;
+        
+        deferred.resolve("User found");
+      },
+      function(data, status, headers, config) {//error callback
+        $window.location.href='/';
+      });
+      
+    return deferred.promise;  
   }
-  $http.get('/api/owners').
+}
+//IndexCtrl.$inject = ['$scope'];
+
+function NavCtrl($scope, $window) {
+  $scope.logout = function() {
+    $window.location.href='/server_logout';
+  }
+}
+
+// function UserCtrl($scope, User, $rootScope) {
+// //WARNING: make sure to update user in rootScope when updating user model on the server.  
+//   $scope.user = User.get({userId: $rootScope.currentUser._id});
+//   
+//   $scope.updateUser = function() {
+//     var id = $scope.user._id;
+//     var userData = $scope.user;
+//     delete userData._id; // stripping the id for mongoDB
+//     User.update({userId: id}, userData, 
+//       function(user){
+//         $scope.user = user;
+//         alert('User updated!');
+//       }, 
+//       function(err){
+//         console.log('Error updating user: ' + err);
+//       }
+//     );
+//   }
+// }
+
+function UserListCtrl($scope, $rootScope, $http, $window) {
+  if(!$rootScope.loggedIn) {
+    $window.location.href='/';
+  }
+
+  $http.get('/api/users').
     success(function(data) {
-      $scope.owners = data;
+      $rootScope.users = data;
     });
 }
 
-function PropertyListCtrl($scope, $http, $location) {
-  if(!$scope.loggedIn) {
-    $location.path('/login');
+function PropertyListCtrl($scope, $rootScope, $http, $window) {
+  if(!$rootScope.loggedIn) {
+    $window.location.href='/';
   }
+
   $http.get('/api/properties').
     success(function(data) {
       $scope.properties = data;
     });
 }
 
-function PropertyCtrl($scope, $routeParams, $location, Property) {
-  if(!$scope.loggedIn) {
-//    return $location.path('/login');
+function PropertyCtrl($scope, $rootScope, $routeParams, $window, $location, Property) {
+  if(!$rootScope.loggedIn) {
+//    return $window.location.href='/';
   }
+
   $scope.oneAtATime = true;
 //  $scope.currencies = ['&dollar;', '&euro;'];
   $scope.rentalRateTypes = ['Nightly', 'Weekly'];
@@ -67,7 +99,7 @@ function PropertyCtrl($scope, $routeParams, $location, Property) {
       if(property.images){
         $scope.mainImageUrl = property.images[0];
       } else {
-        $scope.mainImageUrl = "http://www.macupdate.com/util/iconlg/45342.png";
+        $scope.mainImageUrl = "/images/for_rent.png";
       }
 
       if(typeof property.rates == 'undefined') {
@@ -82,7 +114,7 @@ function PropertyCtrl($scope, $routeParams, $location, Property) {
       $scope.currencySigns = {'dollar':'$', 'euro': '€'};
     },
     function(data, status, headers, config) {//error callback
-      $location.path('/login');
+      $window.location.href='/';
     });
 
    $scope.setImage = function(imageUrl) {
@@ -103,7 +135,7 @@ function PropertyCtrl($scope, $routeParams, $location, Property) {
           $location.path('/property/'+ savedProperty._id).replace();
         },
         function(data, status, headers, config) {//error callback
-          $location.path('/login');
+          $window.location.href='/';
         });
     }
   };
@@ -117,7 +149,7 @@ function PropertyCtrl($scope, $routeParams, $location, Property) {
         },
         function(data, status, headers, config) {//error callback
 
-          $location.path('/login');
+          $window.location.href='/';
         });
     }
   }
@@ -132,4 +164,14 @@ function PropertyCtrl($scope, $routeParams, $location, Property) {
   }
 }
 
-//PropertyCtrl.$inject = ['$scope', '$routeParams', 'Property'];
+function ReservationListCtrl($scope, $rootScope, $http, $window) {
+  if(!$rootScope.loggedIn) {
+    $window.location.href='/';
+  }
+
+  $http.get('/api/reservations').
+    success(function(data) {
+      $scope.reservations = data;
+    });
+}
+

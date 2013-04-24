@@ -1,0 +1,8 @@
+div
+  .row
+    .large-6.large-offset-4.columns
+      p
+        {{users | json}}
+        div(ng-repeat='user in users')
+          h2 {{user.name.first}}
+          p {{user.email}}

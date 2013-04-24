@@ -1,11 +1,10 @@
-.container(ng-controller="PropertyCtrl")
-  include ../../../views/includes/navigation
-  .row.well
-    .span2
+div
+  .row
+    .large-2.columns
       .control-group
         .controls
           img.rental(ng-src="{{mainImageUrl}}")
-    .span3
+    .large-3.columns
       .control-group
         .controls
           label.strong() Rental Unit:
@@ -16,8 +15,8 @@
                           id="pname")
   accordion(close-others="oneAtATime")
     accordion-group(heading="Rates")
-      .row.well(id="property_rates")
-        .span3
+      .row(id="property_rates")
+        .large-3.columns
           .control-group(ng-repeat="rate in property.rates")
             .controls.input-prepend
               label.control-label() {{rate.type}}
@@ -48,8 +47,8 @@
                 li.dropdown(ng-click="addAnotherRate(rateType)", ng-repeat="rateType in rentalRateTypes") 
                   a: {{rateType}}
     accordion-group(heading="Contracts")
-      .row.well(id="property_contracts")
-        .span3
+      .row(id="property_contracts")
+        .large-3.columns
           .control-group
             .controls
               label.strong() Contract:

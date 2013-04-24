@@ -1,10 +1,9 @@
 var Property = require('../models/Property').Property;
-//var Owner = require('../models/Owner').Owner;
 
-exports.ownerPropertyList = function(req, res, next){
+exports.userPropertyList = function(req, res, next){
   Property.
     find().
-    sort( '-owner' ).
+    sort( '-user' ).
     exec(function (err, properties) {
       res.json(properties);
     });
@@ -12,10 +11,10 @@ exports.ownerPropertyList = function(req, res, next){
 
 exports.list = function(req, res, next){
   Property.find({'_id'  : req.params.id, 
-                 'owner': req.session.user._id }, 
+                 'user': req.session.user._id }, 
       function (err, properties) {
-      //If owner is not logged in user or an admin, don't show this
-      // if( owner.id !== req.cookies.user_id ){
+      //If user is not logged in user or an admin, don't show this
+      // if( user.id !== req.cookies.user_id ){
       //   return res.json(false); //OR utils.forbidden( res );??????
       // }
       res.json(properties);
@@ -29,9 +28,9 @@ exports.view = function(req, res, next) {
     return res.json(new Property());
   } else {
     Property.findById( req.params.id, function (err, property){
-      //If owner is not logged in user or an admin, don't show this
+      //If user is not logged in user or an admin, don't show this
       if(!req.session.user || 
-         property.owner.toString() !== req.session.user._id ){ //here, we use owner.toString() b/c owner is an ObjectId object and owner.id is showing in unicode for some reason, breaking the logic. To see use the debugger.
+         property.user.toString() !== req.session.user._id ){ //here, we use user.toString() b/c user is an ObjectId object and user.id is showing in unicode for some reason, breaking the logic. To see use the debugger.
         return next(new Error("User not authenticated")); //OR utils.forbidden( res );??????
       }
       res.json(property);    
@@ -40,7 +39,7 @@ exports.view = function(req, res, next) {
 };
 
 exports.save = function(req, res, next) {
-  // if(owner.id !== req.cookies.user_id) {
+  // if(user.id !== req.cookies.user_id) {
   //   return utils.forbidden(res);
   // }  
   // if(!req.body.name || !req.body.name.trim()) {
@@ -68,7 +67,7 @@ exports.save = function(req, res, next) {
       new Property({
         name: req.body.name,
         rates: req.body.rates,
-        owner: req.session.user._id//temporary owner id until I complete the sessions
+        user: req.session.user._id//temporary user id until I complete the sessions
       }).save( function (err, property, count) {
         if (err) { 
           return next(err);
@@ -83,7 +82,7 @@ exports.save = function(req, res, next) {
 
 exports.delete = function(req, res, next) {
   Property.findById( req.params.id, function ( err, property ){
-    // if( owner.id !== req.cookies.user_id ){
+    // if( user.id !== req.cookies.user_id ){
     //   return res.json(false); //OR utils.forbidden( res );??????
     // }
  

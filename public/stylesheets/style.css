@@ -1,11 +1,11 @@
-body {
-  padding-top: 60px;
-}
-padding-bottom: 40px {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-a {
-  color: #00b7ff;
+img.rental {
+  float: left;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  background-color: #fff;
+  padding: 1em;
+  height: 50px;
+  width: 50px;
 }
 input.ng-pristine.ng-invalid {
   border: solid 2px #f00;
@@ -16,3 +16,4 @@ input.ng-dirty.ng-invalid {
 input.ng-dirty.ng-valid {
   border: solid 2px #008000;
 }
+

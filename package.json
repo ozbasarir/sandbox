@@ -11,6 +11,9 @@
     "stylus": "*",
     "mongoose": "~3.5.7",
     "crypto": "*",
+		"bcrypt": "0.7.5",
+    "colors": "*",
+		"connect-redis": "1.4.5",
     "pwd": "*"
   }
 }
