@@ -1,6 +1,6 @@
 // Look in node_modules/mongoose/examples/schema.js for examples
 (function() {
-  var PropertySchema, mongoose, User, validatePresenceOf, enumRateType, enumCurrencyType;
+  var RentalSchema, mongoose, User, validatePresenceOf, enumRateType, enumCurrencyType;
 
   mongoose = require("../node_modules/mongoose");
   User = require('./User').User;
@@ -34,8 +34,8 @@
       return size;
   };
 
-  propertyRateTypeEnum = {'BASE': 0, 'SEASONAL': 1, 'EVENT': 2};//The higher number trumps the lower number
-  propertyRateCurrencyTypeEnum = {'DOLLAR': 0, 'EURO': 1};
+  rentalRateTypeEnum = {'BASE': 0, 'SEASONAL': 1, 'EVENT': 2};//The higher number trumps the lower number
+  rentalRateCurrencyTypeEnum = {'DOLLAR': 0, 'EURO': 1};
 
 //Can I use enum like below so that I can access and use it outside this file too:
 // my.namespace.ColorEnum = {
@@ -47,7 +47,7 @@
 //    // whatever
 // }  
   
-  PropertySchema = new mongoose.Schema({
+  RentalSchema = new mongoose.Schema({
     name: {
       type: String,
       validate: [validatePresenceOf, 'a name is required']
@@ -58,7 +58,7 @@
     slug: { type: String, lowercase: true, trim: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: User},
     rates: [{
-      type: { type: Number, min: 0, max: Object.size(propertyRateTypeEnum)},//enum: propertyRateTypeEnum },
+      type: { type: Number, min: 0, max: Object.size(rentalRateTypeEnum)},//enum: rentalRateTypeEnum },
       name: { type: String, validate: [validatePresenceOf, 'a name is required'] },
       from: { 
         day: { type: Number, validate: [validateDay, 'invalid day of the month'] },
@@ -79,7 +79,7 @@
         amount: { type: Number, min: 0 },
         forStayLT: { type: Number, min: 2 } // forStayLessThan means, apply it only for stays less than X nights
         }],
-      currency:   { type: Number, min: 0, max: Object.size(propertyRateCurrencyTypeEnum) },
+      currency:   { type: Number, min: 0, max: Object.size(rentalRateCurrencyTypeEnum) },
       amount:     { type: Number },
       description:{ type: String } //Winter, Summer, High, Low, New Year's, etc.
     }],
@@ -103,8 +103,8 @@
     };
   };
 
-  PropertySchema.plugin(slugGenerator());
+  RentalSchema.plugin(slugGenerator());
 
 
-  exports.Property = mongoose.model('Property', PropertySchema, 'property');
+  exports.Rental = mongoose.model('Rental', RentalSchema, 'rental');
 }).call(this);

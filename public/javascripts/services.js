@@ -3,9 +3,9 @@
 /* Services */
 
 angular.module('rentalApp.services', ['ngResource']).
-  factory('Property', ['$resource', function($resource) { //example from http://docs.angularjs.org/tutorial/step_11
-    return $resource('/api/property/:id', {}, {
-      query: {method: 'GET', params: {id: 'properties'}, isArray:true}
+  factory('Rental', ['$resource', function($resource) { //example from http://docs.angularjs.org/tutorial/step_11
+    return $resource('/api/rental/:id', {}, {
+      query: {method: 'GET', params: {id: 'rentals'}, isArray:true}
     });
   }]).
   factory('User', ['$resource', function($resource) { 

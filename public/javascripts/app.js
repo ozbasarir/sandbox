@@ -13,17 +13,17 @@ var rentalApp = angular.module('rentalApp', ['ui.bootstrap', 'rentalApp.filters'
         templateUrl: 'partials/user/partial/list',
         controller: UserListCtrl
       }).
-      when('/properties', {
-        templateUrl: 'partials/property/partial/list',
-        controller: PropertyListCtrl
+      when('/rentals', {
+        templateUrl: 'partials/rental/partial/list',
+        controller: RentalListCtrl
       }).
-      when('/property/new', {
-        templateUrl: 'partials/property/partial/index',
-        controller: PropertyCtrl
+      when('/rental/new', {
+        templateUrl: 'partials/rental/partial/index',
+        controller: RentalCtrl
       }).
-      when('/property/:id', {
-        templateUrl: 'partials/property/partial/index',
-        controller: PropertyCtrl
+      when('/rental/:id', {
+        templateUrl: 'partials/rental/partial/index',
+        controller: RentalCtrl
       }).
       when('/reservations', {
         templateUrl: 'partials/reservation/partial/list',
@@ -70,7 +70,7 @@ var rentalApp = angular.module('rentalApp', ['ui.bootstrap', 'rentalApp.filters'
 //     return tempArray;
 //   }
 //   
-//   var getProperties = function(user) {
+//   var getRentals = function(user) {
 //     var tempArray = [
 //       {name:'Studio'},
 //       {name:'Upstairs'},
@@ -82,20 +82,20 @@ var rentalApp = angular.module('rentalApp', ['ui.bootstrap', 'rentalApp.filters'
 //   
 //   return {
 //     getUsers: getUsers,
-//     getProperties: getProperties,
+//     getRentals: getRentals,
 //   }
 // });
 // 
 // rentalApp.factory('rentalHelper', function(rentalModel) {
-//   var findPropertiesFor = function(user) {
+//   var findRentalsFor = function(user) {
 //     if('Peggy' == user) {
-//       return rentalModel.getProperties();
+//       return rentalModel.getRentals();
 //     }
 //     
 //     return null;
 //   }
 //   
 //   return {
-//     findProperties: findProperties,
+//     findRentals: findRentals,
 //   }
 // });

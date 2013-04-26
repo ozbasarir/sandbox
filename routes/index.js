@@ -9,6 +9,7 @@ var User = require('../models/User').User
 // }
 
 exports.index = function(req, res){
+console.log("server request for / handled");  
   if(req.session.user) {
     res.render('index', {
       settings: settings
@@ -22,12 +23,15 @@ exports.index = function(req, res){
 };
 
 exports.serverLogout = function(req, res){
+console.log("server request for /server_logout handled");  
+
   req.session.destroy(function(){
     return res.redirect('/');
   });
 }
 
 exports.partials = function(req, res){
+console.log("server request for "+req.params.module+"/"+req.params.partial+" handled");  
   res.render('partials/' + req.params.module + '/' + req.params.partial, {
     settings: settings
   });
