@@ -1,17 +1,8 @@
 !!!
-//if lt IE 7
-  html.no-js.ie6.oldie(lang='en')
-//if IE 7
-  html.no-js.ie7.oldie(lang='en')
-//if IE 8
-  html.no-js.ie8.oldie(lang='en')
-//[if gt IE 8]><!
-html.no-js(lang='en')
-  //<![end if]
+html(ng-app='rentalApp', lang='en')
   head
     include ../views/includes/head
-  body.antialiased(ng-app='rentalApp')
+  body
     include ../views/includes/navigation
-    .row
-      div(ng-view)
+    div(ng-view)
     include ../views/includes/footer

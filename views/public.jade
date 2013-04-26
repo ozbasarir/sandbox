@@ -1,22 +1,12 @@
 !!!
-//if lt IE 7
-  html.no-js.ie6.oldie(lang='en')
-//if IE 7
-  html.no-js.ie7.oldie(lang='en')
-//if IE 8
-  html.no-js.ie8.oldie(lang='en')
-//[if gt IE 8]><!
-html.no-js(lang='en')
-  //<![end if]
+html(lang='en')
   meta(charset='utf8')
   meta(http-equiv='X-UA-Compatible',content='IE=edge,chrome=1')
   meta(name='viewport',content='width=device-width, initial-scale=1.0')
-  base(href='/')
   title Rental Manager
-  link(rel='stylesheet', href='/libs/foundation-4.1.2/css/normalize.css')
-  link(rel='stylesheet', href='/libs/foundation-4.1.2/css/foundation.min.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
-  script(src="/libs/foundation-4.1.2/js/vendor/custom.modernizr.js")
+  link(rel='stylesheet', href='/libs/bootstrap/css/bootstrap.min.css')
+  link(rel='stylesheet', href='/libs/bootstrap/css/bootstrap-responsive.min.css')
   // Fav and touch icons
   link(rel="apple-touch-icon-precomposed", sizes="144x144", href="/images/apple-touch-icon-144-precomposed.png")
   link(rel="apple-touch-icon-precomposed", sizes="114x114", href="/images/apple-touch-icon-114-precomposed.png")
@@ -52,22 +42,22 @@ html.no-js(lang='en')
     })();
 
   body.antialiased
-    .contain-to-grid.sticky
-      nav.top-bar
-        ul.title-area
-          li.name
-            h1 RENTAL MANAGER
-    .row
-      .large-1.columns
-        div: &nbsp;
-    .row
-      .large-6.large-offset-4.columns
-        div(id="janrainEngageEmbed")
-
-    script(src="/libs/foundation-4.1.2/js/vendor/jquery.js")
-    //script(src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
-    // script(src="/libs/foundation-4.1.2/js/foundation.min.js")
-    script(src="/libs/foundation-4.1.2/js/foundation/foundation.js")
-    script(src="/libs/foundation-4.1.2/js/foundation/foundation.topbar.js")
-    script(type="text/javascript")
-      $(document).foundation();
+    .navbar.navbar-inverse.navbar-fixed-top
+      .navbar-inner
+        .container
+          button.btn.btn-navbar(data-toggle="collapse",data-target=".nav-collapse")
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.brand(href="#")
+            span RENTAL MANAGER
+          .nav-collapse.collapse
+            ul.nav
+              li: a(href="#") About
+    .container
+      //.hero-unit BANNER IMAGE GOES HERE
+      .row-fluid
+        .span5.offset3.well-large
+          div(id="janrainEngageEmbed")
+    script(src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
+    script(src="/libs/bootstrap/js/bootstrap.min.js")

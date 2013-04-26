@@ -12,7 +12,7 @@ exports.userPropertyList = function(req, res, next){
 exports.list = function(req, res, next){
   Property.find({'_id'  : req.params.id, 
                  'user': req.session.user._id }, 
-      function (err, properties) {
+    function (err, properties) {
       //If user is not logged in user or an admin, don't show this
       // if( user.id !== req.cookies.user_id ){
       //   return res.json(false); //OR utils.forbidden( res );??????

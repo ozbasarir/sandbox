@@ -4,6 +4,10 @@ var User = require('../models/User').User
   , https = require('https')
   , settings= require('../settings');
 
+// exports.testbed = function(req, res){
+//   res.render('testbed');
+// }
+
 exports.index = function(req, res){
   if(req.session.user) {
     res.render('index', {
