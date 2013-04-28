@@ -2,9 +2,9 @@ require('should');
 
 var assert = require("assert"),
     mongoose = require('mongoose'),
-    settings = require('../settings'),
-    Property = require('../models/Property').Property, 
-    User = require('../models/User').User;
+    settings = require('../../settings'),
+    Rental = require('../../models/Rental').Rental, 
+    User = require('../../models/User').User;
 
 describe('models', function() {
   beforeEach(function() {
@@ -15,14 +15,14 @@ describe('models', function() {
   });
   describe('creating rentals', function() {
     before(function() {
-      return Property.remove({name: 'studiom'}, function(err, data) {});
+      return Rental.remove({name: 'studiom'}, function(err, data) {});
     });
     return it('save() should create a new rental', function(done) {
 
       User.findById('5143ca018b7149aa44000001', function (err, user) {
 
         var rental;
-        rental = new Property({
+        rental = new Rental({
           name: 'studiom'
         });
 
@@ -39,7 +39,7 @@ describe('models', function() {
           amount: 123
         });
         return rental.save(function(err, data) {
-          return Property.findById(rental._id, function(err, document) {
+          return Rental.findById(rental._id, function(err, document) {
             document.name.should.eql('studiom');
             document.rates[0]['type'].should.eql('Nightly');
             return document.remove(function(err, data) {

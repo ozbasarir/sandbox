@@ -1,6 +1,6 @@
 'use strict';
 
-var rentalApp = angular.module('rentalApp', ['ui.bootstrap']);
+var testApp = angular.module('testApp', ['ui.bootstrap']);
 
 function TabsDemoCtrl($scope) {
   $scope.panes = [
