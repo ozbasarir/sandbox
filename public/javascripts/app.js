@@ -5,32 +5,33 @@ var rentalApp = angular.module('rentalApp', ['ui.bootstrap', 'rentalApp.filters'
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.
       when('/', {
-        templateUrl: 'partials/user/partial/index',
+        templateUrl: '/partials/user/partial/index',
         controller: IndexCtrl,
         resolve: IndexCtrl.resolve
       }).
       when('/users', {
-        templateUrl: 'partials/user/partial/list',
+        templateUrl: '/partials/user/partial/list',
         controller: UserListCtrl
       }).
       when('/rentals', {
-        templateUrl: 'partials/rental/partial/list',
+        templateUrl: '/partials/rental/partial/list',
         controller: RentalListCtrl
       }).
       when('/rental/new', {
-        templateUrl: 'partials/rental/partial/index',
+        templateUrl: '/partials/rental/partial/index',
         controller: RentalCtrl
       }).
       when('/rental/:id', {
-        templateUrl: 'partials/rental/partial/index',
+        templateUrl: '/partials/rental/partial/index',
         controller: RentalCtrl
       }).
       when('/reservations', {
-        templateUrl: 'partials/reservation/partial/list',
+        templateUrl: '/partials/reservation/partial/list',
         controller: ReservationListCtrl
       }).
       otherwise({
-        redirectTo: '/'
+        //redirectTo: '/'
+        template: '<p>Invalid page</p>', controller: 'IndexCtrl'
       });
       
     $locationProvider.html5Mode(true);

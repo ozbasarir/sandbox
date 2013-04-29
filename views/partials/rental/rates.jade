@@ -1,0 +1,30 @@
+.span11.offset1
+  .control-group(data-ng-repeat="rate in property.rates")
+    .controls.input-prepend
+      label.control-label() {{rate.type}}
+      .btn-group
+        button.btn() {{currencySigns[rate.currency]}}
+        button.btn.dropdown-toggle(data-toggle="dropdown")
+          span.caret
+        ul.dropdown-menu
+          li.dropdown(data-ng-click="updateRateCurrency(rate, 'dollar')")
+            a: &nbsp; &dollar; Dollars
+          li.dropdown(data-ng-click="updateRateCurrency(rate, 'euro')")
+            a: &nbsp; &euro; Euros
+      ul.dropdown-menu
+        li.dropdown(data-ng-click="updateRateCurrency(rate, 'dollar')")
+      input.input-small(data-ng-model='rate.amount', type="text")
+      label.control-label() &nbsp;From
+      input.input-small(type="text", data-ng-model="from_month")
+      input.input-small(type="text", data-ng-model="from_day")
+      label.control-label() &nbsp;To
+      input.input-small(type="text", data-ng-model="to_month")
+      input.input-small(type="text", data-ng-model="to_day")
+      button.close: &times;
+  .row
+    .btn-group
+      button.btn.dropdown-toggle(data-toggle="dropdown") Add 
+        span.caret
+      ul.dropdown-menu
+        li.dropdown(data-ng-click="addAnotherRate(rateType)", data-ng-repeat="rateType in rentalRateTypes") 
+          a: {{rateType}}

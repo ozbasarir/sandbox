@@ -1,0 +1,13 @@
+.span2
+  .control-group
+    .controls
+      img.rental(data-ng-src="{{mainImageUrl}}")
+.span3.offset2
+  .control-group
+    .controls
+      label.strong() Rental Unit:
+      input.input-med(data-ng-model='property.name', 
+                      data-ng-change="update();",
+                      type="text", 
+                      placeholder='Name', 
+                      id="pname")
