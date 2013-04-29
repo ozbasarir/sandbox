@@ -3,8 +3,11 @@
     .span11.offset1
       tabs
         pane(heading="Info")
-          include info
+          //- include info
+          div(ng-include src=" '/partials/rental/partial/info' ")
         pane(heading="Rates")
-          include rates
+          //- include rates
+          div(ng-include src=" '/partials/rental/partial/rates' ")
         pane(heading="Contracts")
-          include contracts
+          //- include contracts
+          div(ng-include src=" '/partials/rental/partial/contracts' ")
