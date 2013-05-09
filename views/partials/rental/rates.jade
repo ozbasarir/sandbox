@@ -17,7 +17,9 @@ h4 Base Rate
     li.dropdown(data-ng-repeat="currency in currencies",
                 data-ng-click="addAnotherRate(rateTypes.BASE, 'Nightly', currency.id)")
       a: {{currency.sign}} {{currency.name}}
-
+p
+hr
+p
 h4
   span(tooltip="{{seasonalRateTip}}", tooltip-placement="right") Seasonal Rate
 .control-group.well.well-small(data-ng-repeat="rate in rental.rates | filter:{type:rateTypes.SEASONAL}")
@@ -27,18 +29,24 @@ h4
                         placeholder='Season name...', 
                         type="text")
       .control-group
-        select.input-mini(data-ng-model="rate.from.month",
-                     data-ng-options="month for month in months")
+        select.input-mini(
+          data-ng-model="rate.from.month",
+          data-ng-options="month for month in months")
           option(value="") Month
-        select.input-mini(data-ng-model="rate.from.day",
-                     data-ng-options="day for day in daysInMonth(rate.from.month)")
+        select.input-mini(
+          data-ng-model="rate.from.day",
+          data-ng-disabled="!rate.from.month",
+          data-ng-options="day for day in daysInMonth(rate.from.month)")
           option(value="") Day
         span &nbsp;to&nbsp;
-        select.input-mini(data-ng-model="rate.to.month",
-                     data-ng-options="month for month in months")
+        select.input-mini(
+          data-ng-model="rate.to.month",
+          data-ng-options="month for month in months")
           option(value="") Month
-        select.input-mini(data-ng-model="rate.to.day",
-                     data-ng-options="day for day in daysInMonth(rate.to.month)")
+        select.input-mini(
+          data-ng-model="rate.to.day",
+          data-ng-disabled="!rate.to.month",
+          data-ng-options="day for day in daysInMonth(rate.to.month)")
           option(value="") Day
         span &nbsp; each year
     .span5
@@ -56,7 +64,9 @@ h4
     li.dropdown(data-ng-repeat="currency in currencies",
                 data-ng-click="addAnotherRate(rateTypes.SEASONAL, null, currency.id)")
       a: {{currency.sign}} {{currency.name}}
-
+p
+hr
+p
 h4
   span(tooltip="{{eventRateTip}}", tooltip-placement="right") Event Rate
 .control-group.well.well-small(data-ng-repeat="rate in rental.rates | filter:{type:rateTypes.EVENT}")
@@ -71,11 +81,14 @@ h4
           option(value="2013") 2013
           option(value="2014") 2014
           option(value="2015") 2015
-        select.input-mini(data-ng-model="rate.from.month",
-                     data-ng-options="month for month in months")
+        select.input-mini(
+          data-ng-model="rate.from.month",
+          data-ng-options="month for month in months")
           option(value="") Month
-        select.input-mini(data-ng-model="rate.from.day",
-                     data-ng-options="day for day in daysInMonth(rate.from.month)")
+        select.input-mini(
+          data-ng-model="rate.from.day",
+          data-ng-disabled="!rate.from.month",
+          data-ng-options="day for day in daysInMonth(rate.from.month)")
           option(value="") Day
         span &nbsp;to&nbsp;
         select.input-mini(data-ng-model="rate.to.year")
@@ -83,11 +96,14 @@ h4
           option(value="2013") 2013
           option(value="2014") 2014
           option(value="2015") 2015
-        select.input-mini(data-ng-model="rate.to.month",
-                     data-ng-options="month for month in months")
+        select.input-mini(
+          data-ng-model="rate.to.month",
+          data-ng-options="month for month in months")
           option(value="") Month
-        select.input-mini(data-ng-model="rate.to.day",
-                     data-ng-options="day for day in daysInMonth(rate.to.month)")
+        select.input-mini(
+          data-ng-model="rate.to.day",
+          data-ng-disabled="!rate.to.month",
+          data-ng-options="day for day in daysInMonth(rate.to.month)")
           option(value="") Day
     .span5
       .controls.input-prepend
@@ -104,5 +120,11 @@ h4
     li.dropdown(data-ng-repeat="currency in currencies",
                 data-ng-click="addAnotherRate(rateTypes.EVENT, null, currency.id)")
       a: {{currency.sign}} {{currency.name}}
+p
+hr
+p
 
 p {{rental.rates | json}}
+p
+hr
+p
