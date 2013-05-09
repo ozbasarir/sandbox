@@ -8,6 +8,19 @@ var User = require('../models/User').User
 //   res.render('testbed');
 // }
 
+exports.devModeAuth = devModeAuth = function(req, res, fn) {
+  User.findOne({'third_party_id': settings.dev_id}, function(err, user) {
+    if(user) {
+      userObj = user.toObject();
+      if(userObj.third_party_id) {
+        startUserSession(userObj, req, function(){
+          fn();
+          });      
+      }
+    }
+  });
+}
+ 
 exports.index = function(req, res){
 console.log("server request for / handled");  
   if(req.session.user) {
@@ -15,10 +28,18 @@ console.log("server request for / handled");
       settings: settings
     });
   } else {
-    res.render('public', {
-      settings: settings,
-      token_url: req.protocol+'://'+req.host+settings.rpx.token_url
-    });
+    if(settings.devMode) {
+      devModeAuth(req, res, function() {
+        res.render('index', {
+          settings: settings
+        });        
+      });
+    } else {
+      res.render('public', {
+        settings: settings,
+        token_url: req.protocol+'://'+req.host+settings.rpx.token_url
+      });
+    }
   }
 };
 
@@ -120,6 +141,7 @@ console.log("redirecting to user's dashboard");
   rpx_req.on('error', function(e) {
     console.error(e);
   });
+
 
 // {
 //   'stat': 'ok',

@@ -2,33 +2,12 @@
 
 /* Controllers */
 
-function IndexCtrl($scope, $rootScope) {
+function IndexCtrl($scope, $rootScope, user) {
+  console.log(user);
   $scope.user = $rootScope.user;
   $scope.loggedIn = $rootScope.loggedIn;//which should be 'true' here regardless.
 }
 
-IndexCtrl.resolve = {
-  user: function($q, $rootScope, $window, User) {
-    if($rootScope.loggedIn) {
-      return true;
-    }
-    
-    var deferred = $q.defer();
-    
-    User.get({id: 'myself'}, 
-      function(user) {//success callback
-        $rootScope.loggedIn = true;
-        $rootScope.user = user;
-        
-        deferred.resolve("User found");
-      },
-      function(data, status, headers, config) {//error callback
-        $window.location.href='/';
-      });
-      
-    return deferred.promise;  
-  }
-}
 //IndexCtrl.$inject = ['$scope'];
 
 function NavCtrl($scope, $window) {
@@ -58,119 +37,160 @@ function NavCtrl($scope, $window) {
 // }
 
 function UserListCtrl($scope, $rootScope, $http, $window) {
-  if(!$rootScope.loggedIn) {
-    $window.location.href='/';
-  }
-
   $http.get('/api/users').
     success(function(data) {
       $rootScope.users = data;
     });
 }
 
-function RentalListCtrl($scope, $rootScope, $http, $window) {
-  if(!$rootScope.loggedIn) {
-    $window.location.href='/';
-  }
-
+function RentalListCtrl($scope, $http, $window) {
   $http.get('/api/rentals').
     success(function(data) {
       $scope.rentals = data;
     });
 }
 
-function RentalCtrl($scope, $rootScope, $routeParams, $window, $location, Rental) {
-  if(!$rootScope.loggedIn) {
-//    return $window.location.href='/';
-  }
+function NewRentalCtrl($scope, $location, rental) {
+  console.log(rental);
+  $location.path('/rental/'+rental._id).replace();
+}
 
-  $scope.oneAtATime = true;
-//  $scope.currencies = ['&dollar;', '&euro;'];
-  $scope.rentalRateTypes = ['Nightly', 'Weekly'];
-  $scope.days = ['1','2','3','4'];
-  $scope.months = ['1','2','3','4','5','6','7'];
+function RentalCtrl($scope, $routeParams, $location, rentalModel, rentalHelper, rental) {
+  $scope.rental = rental;
+  //Contracts
+  $scope.contractParameters = rentalModel.contractParameters();
+  $scope.contractTemplates = rentalModel.contractTemplates();
+  $scope.languages = rentalModel.languages();
+  //Rates
+  $scope.seasonalRateTip = "This rate will override the base rate for the given period of the season each year";
+  $scope.eventRateTip = "This rate will override the base rate as well as the seasonal rate (if defined) for the specific period of the event";
+  $scope.rateTypes = rentalModel.rateTypes();
+  $scope.currencies = rentalModel.currencies();
+  $scope.daysInMonth = rentalModel.daysInMonth;
+  $scope.months = rentalModel.months();
   $scope.from_month = undefined;
   $scope.from_day = undefined;
   $scope.to_month = undefined;
-  $scope.to_day = undefined;
+  $scope.to_day = undefined; 
 
-  $scope.rental = Rental.get({id: $routeParams.id}, 
-    function(rental) {
-      if(rental.images){
-        $scope.mainImageUrl = rental.images[0];
-      } else {
-        $scope.mainImageUrl = "/images/for_rent.png";
-      }
 
-      if(typeof rental.rates == 'undefined') {
-        rental.rates = [{type: 'Nightly', 
-                           startDate: null,
-                           endDate: null,
-                           currency: "dollar",
-                           amount: 0,
-                           }];
-      }
-    
-      $scope.currencySigns = {'dollar':'$', 'euro': '€'};
-    },
-    function(data, status, headers, config) {//error callback
-      $window.location.href='/';
-    });
+  if($scope.rental.images){
+    $scope.mainImageUrl = $scope.rental.images[0];
+  } else {
+    $scope.mainImageUrl = "/images/for_rent.png";
+  }
 
-   $scope.setImage = function(imageUrl) {
-     $scope.mainImageUrl = imageUrl;
-   }
+  if(typeof $scope.rental.rates == 'undefined' ||
+     !$scope.rental.rates.length) {
+    $scope.rental.rates = [{ 
+      type: $scope.rateTypes.BASE, 
+      }];
+  }
+
+  $scope.addAContract = function() {
+    $scope.rental.contracts.push({ 
+          language: 0, 
+          name: null,
+          text: null,
+          });
+  }
+
+  $scope.insertFirstContract = function() {
+    if(typeof $scope.rental.contracts == 'undefined' ||
+       !$scope.rental.contracts.length) {
+      $scope.addAContract();
+    }
+  }
+
+  $scope.insertFirstContract();
+
+  $scope.deleteThisContract = function(contract) {
+    //$scope.rental.contracts
+    // var index = rentalHelper.arrayObjectIndexOf(
+    //               $scope.rental.rates, 
+    //               rate.name, 
+    //               "name");
+    // $scope.rental.rates.splice(index, 1);
+  }
+
+  $scope.deleteThisRate = function(rate) {
+    var index = rentalHelper.arrayObjectIndexOf(
+                  $scope.rental.rates, 
+                  rate.id, 
+                  "id");
+    $scope.rental.rates.splice(index, 1);
+  }  
+
+  $scope.setImage = function(imageUrl) {
+    $scope.mainImageUrl = imageUrl;
+  }
   
   $scope.update = function() {
-    if($scope.rental.name) {
-      if(!$scope.rental._id) {
-        if(document.activeElement.id === 'pname') {
-          return;
-        }
-      }
-      
-      $scope.rental.$save(
-        function(savedRental, putResponseHeaders) {
-          //if rental object is new, we should redirect to /rental/newid after save.    
-          $location.path('/rental/'+ savedRental._id).replace();
-        },
-        function(data, status, headers, config) {//error callback
-          $window.location.href='/';
-        });
-    }
+    $scope.rental.$save(
+      function(savedRental, putResponseHeaders) {
+        $scope.rental = savedRental;
+        $scope.insertFirstContract();
+      },
+      function(data, status, headers, config) {//error callback
+        throw new Error('Rental could not be updated:'+status);
+      });
   };
   
-  $scope.updateRateCurrency = function($rate, $currency) {
-    $rate.currency = $currency;
-    if($scope.rental.name){
-
-      $scope.rental.$save(
-        function(savedRental, putResponseHeaders) {
-        },
-        function(data, status, headers, config) {//error callback
-
-          $window.location.href='/';
-        });
-    }
+  $scope.updateRateCurrency = function(rate, currency) {
+    rate.currency = currency;
+    $scope.rental.$save(
+      function(savedRental, putResponseHeaders) {
+      },
+      function(data, status, headers, config) {//error callback
+        throw new Error('Rental could not be updated:'+status);
+      }); 
   }
   
-  $scope.addAnotherRate = function($rateType) {
-    $scope.rental.rates.push({type: $rateType, 
-                           startDate: new Date(),
-                           endDate: new Date(),
-                           currency: "dollar",
-                           amount: 0,
-                           });
+  $scope.addAnotherRate = function(type, name, currencyId) {
+    var autoIncrementedIndex = 0;
+    for (var i = $scope.rental.rates.length - 1; i >= 0; i--) {
+      if($scope.rental.rates[i].id >= autoIncrementedIndex) {
+        autoIncrementedIndex = $scope.rental.rates[i].id+1;
+      }
+    };
+
+    $scope.rental.rates.push({ 
+      id: autoIncrementedIndex,
+      type: type,
+      name: name, 
+      currency: currencyId,
+      });
   }
+
+  $scope.insertTemplate = function(templateUsed, contract) {
+    if (!templateUsed) {
+      return;
+    }
+
+    contract.text = templateUsed.text;
+  }
+
+  $scope.addParam = function(paramAdded, contract) {
+    if(!paramAdded) {
+      return;
+    }
+
+    var caretPos = document
+                    .getElementById(contract.name+'_txt')
+                    .selectionStart;
+
+    contract.text = contract.text.substring(0, caretPos) 
+                  + paramAdded 
+                  + contract.text.substring(caretPos);
+    console.log(contract.text);
+  }
+
 }
 
-function ReservationListCtrl($scope, $rootScope, $http, $window) {
-  if(!$rootScope.loggedIn) {
-    $window.location.href='/';
-  }
-
-  $http.get('/api/reservations').
-    success(function(data) {
-      $scope.reservations = data;
-    });
+function ReservationListCtrl($scope, $http, $window) {
+//use a $resource instead with a resolve probably
+  // $http.get('/api/reservations').
+  //   success(function(data) {
+  //     $scope.reservations = data;
+  //   });
 }

@@ -36,6 +36,7 @@
 
   rentalRateTypeEnum = {'BASE': 0, 'SEASONAL': 1, 'EVENT': 2};//The higher number trumps the lower number
   rentalRateCurrencyTypeEnum = {'DOLLAR': 0, 'EURO': 1};
+  contractLanguageEnum = {'English':0, 'Russian': 1};
 
 //Can I use enum like below so that I can access and use it outside this file too:
 // my.namespace.ColorEnum = {
@@ -50,7 +51,7 @@
   RentalSchema = new mongoose.Schema({
     name: {
       type: String,
-      validate: [validatePresenceOf, 'a name is required']
+//      validate: [validatePresenceOf, 'a name is required']
 //      , index: {
 //        unique: true
 //      }
@@ -58,6 +59,7 @@
     slug: { type: String, lowercase: true, trim: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: User},
     rates: [{
+      id: { type: Number, min: 0, index: { unique: true } },
       type: { type: Number, min: 0, max: Object.size(rentalRateTypeEnum)},//enum: rentalRateTypeEnum },
       name: { type: String, validate: [validatePresenceOf, 'a name is required'] },
       from: { 
@@ -82,6 +84,11 @@
       currency:   { type: Number, min: 0, max: Object.size(rentalRateCurrencyTypeEnum) },
       amount:     { type: Number },
       description:{ type: String } //Winter, Summer, High, Low, New Year's, etc.
+    }],
+    contracts: [{
+      name: { type: String, validate: [validatePresenceOf, 'a name is required'] },
+      language: { type: Number, min: 0, max: Object.size(contractLanguageEnum)},//enum: contractLanguageEnum },
+      text: { type: String }
     }],
     created_on: { type: Date, "default": Date.now }
   });

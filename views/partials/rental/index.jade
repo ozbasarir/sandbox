@@ -1,13 +1,17 @@
 .container-fluid
   .row-fluid
-    .span11.offset1
+    .span10.offset1
+      h3
+        p(data-ng-show="rental.name") {{rental.name}}
+        p(data-ng-show="!rental.name") Your Rental
+
       tabs
         pane(heading="Info")
           //- include info
-          div(ng-include src=" '/partials/rental/partial/info' ")
+          div(data-ng-include src=" '/partials/rental/partial/info' ")
         pane(heading="Rates")
           //- include rates
-          div(ng-include src=" '/partials/rental/partial/rates' ")
+          div(data-ng-include src=" '/partials/rental/partial/rates' ")
         pane(heading="Contracts")
           //- include contracts
-          div(ng-include src=" '/partials/rental/partial/contracts' ")
+          div(data-ng-include src=" '/partials/rental/partial/contracts' ")

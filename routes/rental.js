@@ -22,6 +22,7 @@ exports.list = function(req, res, next){
 };
 
 exports.view = function(req, res, next) {
+console.log('User id is:'+req.params.id);  
   if(req.params.id==='rentals') {
     exports.list(req, res, next);
   } else if(req.params.id==='new') {    
@@ -61,13 +62,11 @@ exports.save = function(req, res, next) {
         };
         return res.json(rental);
       });
-    } else if(req.body.name) {//If there is no name, then don't bother saving yet
+    } else if(req.session.user._id) {
       
       //Rental doesn't exist yet, so create a new one
       new Rental({
-        name: req.body.name,
-        rates: req.body.rates,
-        user: req.session.user._id//temporary user id until I complete the sessions
+        user: req.session.user._id
       }).save( function (err, rental, count) {
         if (err) { 
           return next(err);

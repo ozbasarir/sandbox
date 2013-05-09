@@ -1,4 +1,40 @@
-.control-group
-  .controls
-    label.strong() Contract:
-    input.input-med(data-ng-model='property.contracts.name')
+.row-fluid(data-ng-repeat="contract in rental.contracts")
+  .control-group.well.well-small
+    .controls.controls-row
+      select.span3(data-ng-model="contract.language",
+                   data-ng-disabled="!rental.name"
+                   data-ng-options="key for (key,value) in languages")
+      input.span9(data-ng-model="contract.name",
+                  data-ng-disabled="!rental.name"
+                  placeholder="Title of contract")
+    .controls.controls-row
+      select.span6(data-ng-model="templateUsed",
+                   data-ng-options="template.name for template in contractTemplates",
+                   data-ng-change="insertTemplate(templateUsed, contract)",
+                   data-ng-disabled="!contract.name")
+        option(value="") Use a predefined template
+      select.span6(data-ng-model="paramAdded",
+                   data-ng-options="param for param in contractParameters",
+                   data-ng-change="addParam(paramAdded, contract)",
+                   data-ng-disabled="!contract.name || !contract.text")
+        option(value="") Insert a contract parameter
+    .controls
+      textarea.span12(data-ng-model="contract.text",
+                      data-ng-disabled="!contract.name"
+                      id="{{contract.name}}_txt",
+                      maxlength="10000",
+                      rows="20")
+    .btn-group
+      button.btn(data-ng-click="update()",
+                 data-ng-disabled="!contract.name || !contract.text") Save
+      button.btn.dropdown-toggle(data-toggle="dropdown",
+                                 data-ng-disabled="rental.contracts.length>1")
+        span.caret
+      ul.dropdown-menu
+        li.dropdown
+          a(data-ng-click="deleteThisContract(contract)")
+            p Delete this contract
+.row-fluid
+  a(data-ng-click="addAContract()",
+    data-ng-show="rental.contracts.length<10") 
+    p Add another contract
