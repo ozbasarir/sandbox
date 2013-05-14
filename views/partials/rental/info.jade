@@ -1,13 +1,16 @@
-.span2
-  .control-group
-    .controls
-      img.rental(data-ng-src="{{mainImageUrl}}")
-.span3.offset2
-  .control-group
-    .controls
-      label Rental Unit:
-      input.input-med(data-ng-model='rental.name', 
-                      data-ng-change="update();",
-                      type="text", 
-                      placeholder='Name', 
-                      id="pname")
+.row-fluid
+  .span2
+    .control-group
+      .controls
+        img.rental(data-ng-src="{{mainImageUrl}}")
+  .span3.offset2
+    .control-group
+      .controls
+        label Rental Unit:
+        input.input-med(data-ng-model='rental.name', 
+                        type="text", 
+                        placeholder='Name', 
+                        id="pname")
+.well
+  p Debug Info:
+  pre {{rental | json}}

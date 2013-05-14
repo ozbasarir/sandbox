@@ -1,7 +1,13 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var rentalApp = angular.module('rentalApp', ['ui.bootstrap', 'rentalApp.filters', 'rentalApp.services', 'rentalApp.directives']).
+var rentalApp = angular.module('rentalApp', [
+  'ui.bootstrap',
+  'ui.calendar',
+  'rentalApp.filters', 
+  'rentalApp.services', 
+  'rentalApp.directives',
+  ]).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.
       when('/', {
@@ -33,6 +39,16 @@ var rentalApp = angular.module('rentalApp', ['ui.bootstrap', 'rentalApp.filters'
         templateUrl: '/partials/reservation/partial/list',
         controller: ReservationListCtrl,
         resolve: SessionResolve
+      }).
+      when('/reservation/new', {
+        templateUrl: '/partials/reservation/partial/index',
+        controller: NewReservationCtrl,
+        resolve: ReservationNewResolve
+      }).
+      when('/reservation/:id', {
+        templateUrl: '/partials/reservation/partial/index',
+        controller: ReservationCtrl,
+        resolve: ReservationCtrlResolve
       }).
       otherwise({
         //redirectTo: '/'
@@ -115,6 +131,58 @@ var RentalCtrlResolve = {
   }
 
 }
+
+var ReservationNewResolve = {
+  reservation: function($q, $rootScope, $window, User, Reservation) {
+    var deferred = $q.defer();
+
+    User.get({id: 'myself'}, 
+    function(user) {//success callback
+      var reservation = new Reservation();
+
+      reservation.$save(
+        function(savedReservation, putResponseHeaders) {//success callback
+          deferred.resolve(savedReservation);
+        },
+        function(data, status, headers, config) {//error callback
+          //TODO: Show error message that reservation could not be created
+          console.log(status);
+          deferred.reject("Reservation could not be created");
+        });
+    },
+    function(data, status, headers, config) {//error callback
+      $window.location.href='/';
+      // deferred.reject("User cannot be found");
+    });
+
+    return deferred.promise;
+  }
+}
+
+var ReservationCtrlResolve = {
+  reservation: function($q, $rootScope, $route, $window, User, Reservation) {
+    var deferred = $q.defer();
+
+    User.get({id: 'myself'}, 
+      function(user) {//success callback
+        Reservation.get({id: $route.current.pathParams.id}, 
+          function(reservation) {//success callback
+            deferred.resolve(reservation);
+          },
+          function(data, status, headers, config) {//error callback
+            throw new Error('Reservation could not be found. id:'+$route.current.pathParams.id+', status: '+status);
+          });
+      },
+      function(data, status, headers, config) {//error callback
+        console.log(status);
+        $window.location.href='/';
+        // deferred.reject("User cannot be found");
+      });
+
+    return deferred.promise;  
+  }
+
+}
 //Leaving this code in here for now b/c it is an example of using $watch and $on but it is useless 
 //b/c my authentication flow is different.   
 // rentalApp.run(['$rootScope', '$location', 'AuthService', function ($rootScope, $location, AuthService) {
@@ -137,7 +205,6 @@ var RentalCtrlResolve = {
 //     });
 // }]);
 //   
-
 
 rentalApp.factory('rentalModel', function() {
   var contractTemplates = function() {
@@ -195,7 +262,7 @@ rentalApp.factory('rentalModel', function() {
   }
 
   var months = function() {
-    return ['1','2','3','4','5','6','7','8','9','10','11','12'];
+    return [1,2,3,4,5,6,7,8,9,10,11,12];
   }
 
   return {
@@ -217,6 +284,18 @@ rentalApp.factory('rentalHelper', function(rentalModel) {
     return -1;
   }
 
+  var idForNewElement = function (myArray) {
+    var autoIncrementedIndex = 0;
+
+    for (var i = myArray.length - 1; i >= 0; i--) {
+
+      if(myArray[i].id >= autoIncrementedIndex) {
+        autoIncrementedIndex = myArray[i].id+1;
+      }
+    }
+
+    return autoIncrementedIndex;
+  }
   // var findRentalsFor = function(user) {
   //   if('X' == user) {
   //     return rentalModel.getRentals();
@@ -227,5 +306,6 @@ rentalApp.factory('rentalHelper', function(rentalModel) {
   
   return {
     arrayObjectIndexOf: arrayObjectIndexOf,
+    idForNewElement: idForNewElement,
   }
 });

@@ -1,17 +1,15 @@
 .container-fluid
   .row-fluid
     .span10.offset1
+      span.pull-right(data-ng-show="rntlNotification") {{rntlNotification}}
       h3
         p(data-ng-show="rental.name") {{rental.name}}
         p(data-ng-show="!rental.name") Your Rental
-
+      button.btn.pull-right(data-ng-click="update()",
+                 data-ng-disabled="!rental.name") Save
       tabs
-        pane(heading="Info")
-          //- include info
-          div(data-ng-include src=" '/partials/rental/partial/info' ")
-        pane(heading="Rates")
-          //- include rates
-          div(data-ng-include src=" '/partials/rental/partial/rates' ")
-        pane(heading="Contracts")
-          //- include contracts
-          div(data-ng-include src=" '/partials/rental/partial/contracts' ")
+        pane(data-ng-repeat="tab in tabs", 
+             select="updateUrl(tab)",
+             heading="{{tab.title}}",
+             active="tab.active")
+          div(data-ng-include src="tab.template")

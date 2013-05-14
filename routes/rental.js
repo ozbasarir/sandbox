@@ -10,19 +10,13 @@ exports.userRentalList = function(req, res, next){
 };
 
 exports.list = function(req, res, next){
-  Rental.find({'_id'  : req.params.id, 
-                 'user': req.session.user._id }, 
+  Rental.find({ 'user': req.session.user._id }, 
     function (err, rentals) {
-      //If user is not logged in user or an admin, don't show this
-      // if( user.id !== req.cookies.user_id ){
-      //   return res.json(false); //OR utils.forbidden( res );??????
-      // }
       res.json(rentals);
     });
 };
 
 exports.view = function(req, res, next) {
-console.log('User id is:'+req.params.id);  
   if(req.params.id==='rentals') {
     exports.list(req, res, next);
   } else if(req.params.id==='new') {    
@@ -54,6 +48,10 @@ exports.save = function(req, res, next) {
   
       if(req.body.rates) {
         rental.rates = req.body.rates;
+      }
+  
+      if(req.body.contracts) {
+        rental.contracts = req.body.contracts;
       }
   
       rental.save( function(err, rental, count) {

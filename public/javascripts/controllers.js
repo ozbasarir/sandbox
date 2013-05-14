@@ -16,6 +16,7 @@ function NavCtrl($scope, $window) {
   }
 }
 
+
 // function UserCtrl($scope, User, $rootScope) {
 // //WARNING: make sure to update user in rootScope when updating user model on the server.  
 //   $scope.user = User.get({userId: $rootScope.currentUser._id});
@@ -55,111 +56,95 @@ function NewRentalCtrl($scope, $location, rental) {
   $location.path('/rental/'+rental._id).replace();
 }
 
-function RentalCtrl($scope, $routeParams, $location, rentalModel, rentalHelper, rental) {
+function RentalCtrl($scope, $routeParams, $rootScope, $location, 
+                    rentalModel, rentalHelper, rental) {
   $scope.rental = rental;
-  //Contracts
-  $scope.contractParameters = rentalModel.contractParameters();
-  $scope.contractTemplates = rentalModel.contractTemplates();
-  $scope.languages = rentalModel.languages();
-  //Rates
-  $scope.seasonalRateTip = "This rate will override the base rate for the given period of the season each year";
-  $scope.eventRateTip = "This rate will override the base rate as well as the seasonal rate (if defined) for the specific period of the event";
-  $scope.rateTypes = rentalModel.rateTypes();
-  $scope.currencies = rentalModel.currencies();
-  $scope.daysInMonth = rentalModel.daysInMonth;
-  $scope.months = rentalModel.months();
-  $scope.from_month = undefined;
-  $scope.from_day = undefined;
-  $scope.to_month = undefined;
-  $scope.to_day = undefined; 
 
-
-  if($scope.rental.images){
+  if($scope.rental.images) {
     $scope.mainImageUrl = $scope.rental.images[0];
   } else {
     $scope.mainImageUrl = "/images/for_rent.png";
   }
 
-  if(typeof $scope.rental.rates == 'undefined' ||
-     !$scope.rental.rates.length) {
-    $scope.rental.rates = [{ 
-      type: $scope.rateTypes.BASE, 
-      }];
-  }
-
-  $scope.addAContract = function() {
-    $scope.rental.contracts.push({ 
-          language: 0, 
-          name: null,
-          text: null,
-          });
-  }
-
-  $scope.insertFirstContract = function() {
-    if(typeof $scope.rental.contracts == 'undefined' ||
-       !$scope.rental.contracts.length) {
-      $scope.addAContract();
-    }
-  }
-
-  $scope.insertFirstContract();
-
-  $scope.deleteThisContract = function(contract) {
-    //$scope.rental.contracts
-    // var index = rentalHelper.arrayObjectIndexOf(
-    //               $scope.rental.rates, 
-    //               rate.name, 
-    //               "name");
-    // $scope.rental.rates.splice(index, 1);
-  }
-
-  $scope.deleteThisRate = function(rate) {
-    var index = rentalHelper.arrayObjectIndexOf(
-                  $scope.rental.rates, 
-                  rate.id, 
-                  "id");
-    $scope.rental.rates.splice(index, 1);
-  }  
-
   $scope.setImage = function(imageUrl) {
     $scope.mainImageUrl = imageUrl;
   }
-  
+
   $scope.update = function() {
     $scope.rental.$save(
       function(savedRental, putResponseHeaders) {
         $scope.rental = savedRental;
-        $scope.insertFirstContract();
+
+        if(!$scope.rntlNotification) {
+          $scope.rntlNotification = "saved";
+          setTimeout(function(){
+            $scope.$apply(function(){
+                $scope.$eval($scope.rntlNotification = undefined);
+              });            
+            }, 3000);
+        }
       },
       function(data, status, headers, config) {//error callback
         throw new Error('Rental could not be updated:'+status);
       });
   };
   
-  $scope.updateRateCurrency = function(rate, currency) {
-    rate.currency = currency;
-    $scope.rental.$save(
-      function(savedRental, putResponseHeaders) {
-      },
-      function(data, status, headers, config) {//error callback
-        throw new Error('Rental could not be updated:'+status);
-      }); 
+  $scope.updateUrl = function(tab) {
+    $location.hash(tab.title);
+    // var activePane = $scope.panes.filter(function(pane) {
+    //   console.log(pane);
+    //   return pane.active;
+    // })[0];
+    // $location.hash(activePane.title);
   }
   
-  $scope.addAnotherRate = function(type, name, currencyId) {
-    var autoIncrementedIndex = 0;
-    for (var i = $scope.rental.rates.length - 1; i >= 0; i--) {
-      if($scope.rental.rates[i].id >= autoIncrementedIndex) {
-        autoIncrementedIndex = $scope.rental.rates[i].id+1;
-      }
-    };
+  //========== Rental Tabs ================
+  $scope.tabs = [ 
+    { title: 'Info', template: '/partials/rental/partial/info', active: true },
+    { title: 'Rates', template: '/partials/rental/partial/rates'},
+    { title: 'Contracts', template: '/partials/rental/partial/contracts'}
+  ];
+    // $scope.active = function() {
+    //   return $scope.tabs.filter(function(tab){
+    //     return tab.active;
+    //   })[0];
+    // };
+    // console.log('active scope: '+ JSON.stringify($scope.active()));
+  
+    // $scope.$watch('tabs', function(id, oldId) {
+    //   if (id !== oldId) {
+    //     $location.path('/tab/'+id);
+    //   }
+    // });
+    // This call puts angular in an infinite loop:
+    // window.history.replaceState("rates", "Rates", '#rates');
+ 
+  //========== Contracts ==================
+  $scope.contractParameters = rentalModel.contractParameters();
+  $scope.contractTemplates = rentalModel.contractTemplates();
+  $scope.languages = rentalModel.languages();
 
-    $scope.rental.rates.push({ 
-      id: autoIncrementedIndex,
-      type: type,
-      name: name, 
-      currency: currencyId,
+  $scope.addAContract = function() {
+    $scope.rental.contracts.push({ 
+      language: 0, 
+      name: null,
+      text: null,
       });
+    $scope.rental.$save();
+  }
+
+  if(typeof $scope.rental.contracts == 'undefined' ||
+     !$scope.rental.contracts.length) {
+    $scope.addAContract();
+  }
+
+  $scope.deleteThisContract = function(contract) {
+    var index = rentalHelper.arrayObjectIndexOf(
+                  $scope.rental.contracts, 
+                  contract._id, 
+                  '_id');
+    $scope.rental.contracts.splice(index, 1);
+    $scope.rental.$save();
   }
 
   $scope.insertTemplate = function(templateUsed, contract) {
@@ -184,7 +169,41 @@ function RentalCtrl($scope, $routeParams, $location, rentalModel, rentalHelper, 
                   + contract.text.substring(caretPos);
     console.log(contract.text);
   }
+ 
+  //========== Rates ====================
+  $scope.seasonalRateTip = "This rate will override the base rate for the given period of the season each year";
+  $scope.eventRateTip = "This rate will override the base rate as well as the seasonal rate (if defined) for the specific period of the event";
+  $scope.rateTypes = rentalModel.rateTypes();
+  $scope.currencies = rentalModel.currencies();
+  $scope.daysInMonth = rentalModel.daysInMonth;
+  $scope.months = rentalModel.months();
 
+  if(typeof $scope.rental.rates == 'undefined' ||
+     !$scope.rental.rates.length) {
+    $scope.rental.rates = [{ 
+      type: $scope.rateTypes.BASE, 
+      }];
+    $scope.rental.$save();
+  }
+
+  $scope.deleteThisRate = function(rate) {
+    var index = rentalHelper.arrayObjectIndexOf(
+                  $scope.rental.rates, 
+                  rate._id, 
+                  '_id');
+    $scope.rental.rates.splice(index, 1);
+    $scope.rental.$save();
+  }  
+
+  $scope.addAnotherRate = function(type, name, currencyId) {
+    $scope.rental.rates.push({ 
+      type: type,
+      name: name, 
+      currency: currencyId,
+      });
+    $scope.rental.$save();
+  }
+  
 }
 
 function ReservationListCtrl($scope, $http, $window) {
@@ -193,4 +212,108 @@ function ReservationListCtrl($scope, $http, $window) {
   //   success(function(data) {
   //     $scope.reservations = data;
   //   });
+
+}
+
+function NewReservationCtrl($scope, $location, reservation) {
+  console.log(reservation);
+  $location.path('/reservation/'+reservation._id).replace();
+}
+
+function ReservationCtrl($scope, $routeParams, $rootScope, $location, reservation) {
+  $scope.reservation = reservation;
+
+
+  var date = new Date();
+  var d = date.getDate();
+  var m = date.getMonth();
+  var y = date.getFullYear();
+  /* event source that pulls from google.com */
+  $scope.eventSource = {
+          url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
+          className: 'gcal-event',           // an option!
+          currentTimezone: 'America/Chicago' // an option!
+  };
+  /* event source that contains custom events on the scope */
+  $scope.events = [
+    {title: 'All Day Event',start: new Date(y, m, 1)},
+    {title: 'Long Event',start: new Date(y, m, d - 5),end: new Date(y, m, d - 2)},
+    {id: 999,title: 'Repeating Event',start: new Date(y, m, d - 3, 16, 0),allDay: false},
+    {id: 999,title: 'Repeating Event',start: new Date(y, m, d + 4, 16, 0),allDay: false},
+    {title: 'Birthday Party',start: new Date(y, m, d + 1, 19, 0),end: new Date(y, m, d + 1, 22, 30),allDay: false},
+    {title: 'Click for Google',start: new Date(y, m, 28),end: new Date(y, m, 29),url: 'http://google.com/'}
+  ];
+  /* event source that calls a function on every view switch */
+  $scope.eventsF = function (start, end, callback) {
+    var s = new Date(start).getTime() / 1000;
+    var e = new Date(end).getTime() / 1000;
+    var m = new Date(start).getMonth();
+    var events = [{title: 'Feed Me ' + m,start: s + (50000),end: s + (100000),allDay: false, className: ['customFeed']}];
+    callback(events);
+  };
+  /* alert on eventClick */
+  $scope.alertEventOnClick = function( date, allDay, jsEvent, view ){
+      $scope.$apply(function(){
+        $scope.alertMessage = ('Day Clicked ' + date);
+      });
+  };
+  /* alert on Drop */
+   $scope.alertOnDrop = function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view){
+      $scope.$apply(function(){
+        $scope.alertMessage = ('Event Droped to make dayDelta ' + dayDelta);
+      });
+  };
+  /* alert on Resize */
+  $scope.alertOnResize = function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view ){
+      $scope.$apply(function(){
+        $scope.alertMessage = ('Event Resized to make dayDelta ' + minuteDelta);
+      });
+  };
+  /* add and removes an event source of choice */
+  $scope.addRemoveEventSource = function(sources,source) {
+    var canAdd = 0;
+    angular.forEach(sources,function(value, key){
+      if(sources[key] === source){
+        sources.splice(key,1);
+        canAdd = 1;
+      }
+    });
+    if(canAdd === 0){
+      sources.push(source);
+    }
+  };
+  /* add custom event*/
+  $scope.addEvent = function() {
+    $scope.events.push({
+      title: 'Open Sesame',
+      start: new Date(y, m, 28),
+      end: new Date(y, m, 29),
+      className: ['openSesame']
+    });
+  };
+  /* remove event */
+  $scope.remove = function(index) {
+    $scope.events.splice(index,1);
+  };
+  /* Change View */
+  $scope.changeView = function(view) {
+    $scope.myCalendar.fullCalendar('changeView',view);
+  };
+  /* config object */
+  $scope.uiConfig = {
+    calendar:{
+      height: 450,
+      editable: true,
+      header:{
+        left: 'month basicWeek basicDay agendaWeek agendaDay',
+        center: 'title',
+        right: 'today prev,next'
+      },
+      dayClick: $scope.alertEventOnClick,
+      eventDrop: $scope.alertOnDrop,
+      eventResize: $scope.alertOnResize
+    }
+  };
+  /* event sources array*/
+  $scope.eventSources = [$scope.events, $scope.eventSource, $scope.eventsF];
 }

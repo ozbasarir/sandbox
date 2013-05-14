@@ -8,7 +8,7 @@ h4 Base Rate
                       type="text")
   .row-fluid
     a(data-ng-click="deleteThisRate(rate)")
-      p Delete this rate
+      span Delete this rate
 
 .btn-group
   button.btn.dropdown-toggle(data-toggle="dropdown") Add currency
@@ -56,7 +56,7 @@ h4
         input.input-small(data-ng-model='rate.amount', type="text")
   .row-fluid
     a(data-ng-click="deleteThisRate(rate)")
-      p Delete this season
+      span Delete this season
 .row-fluid.btn-group
   button.btn.dropdown-toggle(data-toggle="dropdown") Add seasonal rate
     span.caret
@@ -112,7 +112,7 @@ h4
         input.input-small(data-ng-model='rate.amount', type="text")
   .row-fluid
     a(data-ng-click="deleteThisRate(rate)")
-      p Delete this event
+      span Delete this event
 .row-fluid.btn-group
   button.btn.dropdown-toggle(data-toggle="dropdown") Add event rate
     span.caret
@@ -124,7 +124,6 @@ p
 hr
 p
 
-p {{rental.rates | json}}
-p
-hr
-p
+.well
+  p Debug Info:
+  pre {{rental | json}}

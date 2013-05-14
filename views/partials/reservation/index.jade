@@ -1,0 +1,30 @@
+.container-fluid
+  .row-fluid
+    .span10.offset1
+      span.pull-right(data-ng-show="rntlNotification") {{rntlNotification}}
+      h3 Reservation
+      div
+        p
+          button.btn.btn-primary(ng-click="addEvent()", type="button") Add Event
+
+        ul.unstyled
+          li(ng-repeat="e in events")
+            .alert.alert-info
+              a.close(ng-click="remove($index)")
+                i.icon-remove
+              b {{e.title}} - {{e.start | date:"MMM dd"}}
+
+      .span8
+        .alert-success calAlert
+          h4 {{alertMessage}}
+        .btn-toolbar
+          p.pull-right.lead You can drag events below
+            .btn-group
+              button.btn.btn-info(ng-click="addRemoveEventSource(eventSources,eventSource)") Toggle an event source
+              button.btn.btn-success(ng-click="changeView('agendaDay')") AgendaDay
+              button.btn.btn-success(ng-click="changeView('agendaWeek')") AgendaWeek
+              button.btn.btn-success(ng-click="changeView('month')") Month
+        .calendar(ng-model="eventSources", 
+                  calendar="myCalendar", 
+                  config="uiConfig.calendar", 
+                  ui-calendar="uiConfig.calendar")

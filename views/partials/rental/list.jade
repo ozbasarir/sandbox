@@ -1,3 +1,10 @@
 .container-fluid
   .span11.offset1
-    h2 Your Rentals (Coming Soon!)
+    h2 
+      span Your Rentals
+    .control-group.well.well-small(data-ng-repeat="rental in rentals")
+      .controls.controls-row
+        a(data-ng-href="/rental/{{rental._id}}")
+          pre
+            {{rental | json}}
+

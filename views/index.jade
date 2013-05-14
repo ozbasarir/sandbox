@@ -1,9 +1,9 @@
 !!!
-html(lang='en', ng-app='rentalApp')
+html(lang='en', data-ng-app='rentalApp')
   head
     include ../views/includes/head
   body
     include ../views/includes/navigation
-    .row
-      div(ng-view)
+    .row-fluid
+      div(data-ng-view)
     include ../views/includes/footer
