@@ -4,6 +4,7 @@
 var rentalApp = angular.module('rentalApp', [
   'ui.bootstrap',
   'ui.calendar',
+  'ui.date',
   'rentalApp.filters', 
   'rentalApp.services', 
   'rentalApp.directives',
@@ -180,8 +181,20 @@ var ReservationCtrlResolve = {
       });
 
     return deferred.promise;  
-  }
+  },
+  rentals: function($q, Rental) {
+    var deferred = $q.defer();
 
+    Rental.query( 
+      function(rentals) {//success callback
+        deferred.resolve(rentals);
+      },
+      function(data, status, headers, config) {//error callback
+        throw new Error('Rentals could not be found for user, status: '+status);
+      });
+
+    return deferred.promise;  
+  }
 }
 //Leaving this code in here for now b/c it is an example of using $watch and $on but it is useless 
 //b/c my authentication flow is different.   

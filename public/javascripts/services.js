@@ -5,7 +5,7 @@
 angular.module('rentalApp.services', ['ngResource']).
   factory('Rental', ['$resource', function($resource) { //example from http://docs.angularjs.org/tutorial/step_11
     return $resource('/api/rentals/:id', {}, {
-      query: {method: 'GET', params: {id: undefined}, isArray:true}
+      query: {method: 'GET', isArray:true}
     });
   }]).
   factory('User', ['$resource', function($resource) { 

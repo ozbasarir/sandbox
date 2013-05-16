@@ -3,28 +3,45 @@
     .span10.offset1
       span.pull-right(data-ng-show="rntlNotification") {{rntlNotification}}
       h3 Reservation
-      div
-        p
-          button.btn.btn-primary(ng-click="addEvent()", type="button") Add Event
+      .control-group
+        .controls.controls-row
+          .span1
+            img.rental(data-ng-src="/images/for_rent.png")
+          .span2
+            select(data-ng-model="reservation.rental",
+                   data-ng-options="rental.name for rental in rentals",
+                   data-ng-change="")
+              option(value="") Choose rental unit
+        .controls.controls-row
+          label Check-in:
+          input.span2(data-ng-model='reservation.checkinDate', 
+                          ui-date="dateOptions", 
+                          ui-date-format="DD, d MM, yy",
+                          placeholder='Date...')
+          .input-append.bootstrap-timepicker
+            input.span1(data-ng-model='reservation.checkinTime', 
+                          type="text",
+                          id="timepicker1",
+                          placeholder='Time...')
+            span.add-on
+              i.icon-time
+        .controls.controls-row
+          label Check-out:
+          input.span2(data-ng-model='reservation.checkoutDate', 
+                          ui-date="dateOptions", 
+                          ui-date-format="DD, d MM, yy",
+                          placeholder='Date...')
+          .input-append.bootstrap-timepicker
+            input.span1(data-ng-model='reservation.checkoutTime', 
+                        type="text", 
+                        id="timepicker2",
+                        placeholder='Time...')
+            span.add-on
+              i.icon-time
 
-        ul.unstyled
-          li(ng-repeat="e in events")
-            .alert.alert-info
-              a.close(ng-click="remove($index)")
-                i.icon-remove
-              b {{e.title}} - {{e.start | date:"MMM dd"}}
-
-      .span8
-        .alert-success calAlert
-          h4 {{alertMessage}}
-        .btn-toolbar
-          p.pull-right.lead You can drag events below
-            .btn-group
-              button.btn.btn-info(ng-click="addRemoveEventSource(eventSources,eventSource)") Toggle an event source
-              button.btn.btn-success(ng-click="changeView('agendaDay')") AgendaDay
-              button.btn.btn-success(ng-click="changeView('agendaWeek')") AgendaWeek
-              button.btn.btn-success(ng-click="changeView('month')") Month
-        .calendar(ng-model="eventSources", 
+      .span8.offset4(data-ng-show="events")
+        .alert-success {{alertMessage}}
+        .calendar(data-ng-model="eventSources", 
                   calendar="myCalendar", 
                   config="uiConfig.calendar", 
                   ui-calendar="uiConfig.calendar")

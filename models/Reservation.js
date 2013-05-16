@@ -11,16 +11,10 @@
     user: { type: mongoose.Schema.Types.ObjectId, ref: User},
     rental: { type: mongoose.Schema.Types.ObjectId, ref: Rental},
     contract: { type: mongoose.Schema.Types.ObjectId, ref: Contract},
-    checkin: { 
-      day: { type: Number, validate: [validateDay, 'invalid day of the month'] },
-      month: { type: Number, min: 1, max: 12 },
-      year: { type: Number }
-      },
-    checkout: { 
-      day: { type: Number, validate: [validateDay, 'invalid day of the month'] },
-      month: { type: Number, min: 1, max: 12 },
-      year: { type: Number }
-      },
+    checkinDate: { type: Date },
+    checkinTime: { type: Date }, //split up time for the ease of data entry logic
+    checkoutDate: { type: Date },
+    checkoutTime: { type: Date}, //split up time for the ease of data entry logic
     adults: { type: Number, min: 1 },
     kids: { type: Number, min: 0 },
     max_guests: { type: Number },
