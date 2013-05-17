@@ -11,13 +11,13 @@
     user: { type: mongoose.Schema.Types.ObjectId, ref: User},
     rental: { type: mongoose.Schema.Types.ObjectId, ref: Rental},
     contract: { type: mongoose.Schema.Types.ObjectId, ref: Contract},
-    checkinDate: { type: Date },
-    checkinTime: { type: Date }, //split up time for the ease of data entry logic
-    checkoutDate: { type: Date },
-    checkoutTime: { type: Date}, //split up time for the ease of data entry logic
+    checkInDate: { type: Date },
+    checkInTime: { type: Date }, //split up time for the ease of data entry logic
+    checkOutDate: { type: Date },
+    checkOutTime: { type: Date}, //split up time for the ease of data entry logic
     adults: { type: Number, min: 1 },
     kids: { type: Number, min: 0 },
-    max_guests: { type: Number },
+    maxGuests: { type: Number },
     currency:   { type: Number },
     amount:     { type: Number },
     created_on: { type: Date, "default": Date.now }

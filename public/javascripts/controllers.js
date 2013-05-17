@@ -220,9 +220,12 @@ function NewReservationCtrl($scope, $location, reservation) {
   $location.path('/reservation/'+reservation._id).replace();
 }
 
-function ReservationCtrl($scope, $routeParams, $rootScope, $location, reservation, rentals) {
+function ReservationCtrl($scope, $routeParams, $rootScope, $location, rentalModel, reservation, rentals) {
   $scope.reservation = reservation;
   $scope.rentals = rentals;
+  $scope.rateTypes = rentalModel.rateTypes();
+  $scope.currencies = rentalModel.currencies();
+  $scope.languages = rentalModel.languages();
 
   //========== Calendar ====================
 
@@ -290,20 +293,106 @@ function ReservationCtrl($scope, $routeParams, $rootScope, $location, reservatio
   $scope.dateOptions = {
         changeYear: true,
         changeMonth: true,
+        dateFormat: 'DD, d MM, yy',
         yearRange: '2013:2020'
     };
 
-  $('#timepicker1').timepicker({
-    template: false,
-    showInputs: false,
-    minuteStep: 30
-    });
-  $('#timepicker2').timepicker({
-    template: false,
-    showInputs: false,
-    minuteStep: 30
-    });
-  //TODO: Get the following values from rental
-  $scope.reservation.checkinTime = '1:00PM';
-  $scope.reservation.checkoutTime = '11:00AM';
+  $scope.appliedRates = [];
+
+  // Possible scenarios:
+  // - base rate: no dates, always picked (dayRates & stayRates applicable to this as well)
+  // - season rate:
+  //    - year never defined. check for both end 
+  // - event rate:
+  //    - year always defined. do (StartA <= EndB) and (EndA >= StartB)
+  $scope.rateAppliesToDate = function(rate, checkInDate, checkOutDate) {
+    if(rate.type == $scope.rateTypes.BASE) { 
+      return true;
+    }
+    // TODO: implement for seasons and events as well
+  }
+
+  $scope.setAppliedRates = function() {
+
+    //Collect the applicable rates based on the contract language
+    var rates = $scope.reservation.rental.rates;
+    var currency = ($scope.reservation.contract.language !== $scope.languages.FRENCH) ?
+      //If language is not French, assume dollar is the currency
+      $.grep($scope.currencies, function(e){ return e.name == 'Dollars'; }) :
+      //otherwise, assume euro is the currency
+      $.grep($scope.currencies, function(e){ return e.name == 'Euros'; });
+
+    for (var i = rates.length - 1; i >= 0; i--) {
+      if(rates[i].currency == currency.id) {
+        if($scope.rateAppliesToDate(rates[i], 
+                                    $scope.reservation.checkInDate, 
+                                    $scope.reservation.checkOutDate)){
+          $scope.appliedRates.push(rates[i]);
+        }
+      }
+    }
+
+    if(!$scope.appliedRates.length){
+      alert('This rental unit does not have a rate defined in the relevant currency.');
+    } 
+  } 
+   
+  $scope.initValues = function() {
+    if($scope.reservation.rental) {
+      if(!$scope.reservation.checkInTime) {
+        $scope.reservation.checkInTime = ($scope.reservation.rental.checkInTime) ? 
+          $scope.reservation.rental.checkInTime : '01:00 PM';
+
+        $scope.reservation.checkOutTime = ($scope.reservation.rental.checkOutTime) ? 
+          $scope.reservation.rental.checkOutTime : '11:00 AM';
+      }
+
+      if(!$scope.reservation.checkInDate) {
+        $scope.reservation.checkInDate = new Date();
+        $scope.reservation.checkOutDate = new Date();
+        $scope.reservation.checkOutDate.setDate(
+          $scope.reservation.checkInDate.getDate()+1);
+      }
+
+      if(!$scope.reservation.contract) {
+        if(!$scope.reservation.rental.contracts[0]) {
+          alert('This rental unit does not have any contracts. Please create one.');
+        }
+        $scope.reservation.contract = $scope.reservation.rental.contracts[0];
+
+        $scope.setAppliedRates();
+      }
+    }
+  }
+
+  $scope.initValues();
+
+  $scope.validateDates = function() {
+    // If we don't set the hours, the comparison may fail on same days
+    $scope.reservation.checkInDate.setHours(0,0,0,0);
+    $scope.reservation.checkOutDate.setHours(0,0,0,0);
+
+    if($scope.reservation.checkInDate >= $scope.reservation.checkOutDate) {
+      $scope.reservation.checkOutDate = new Date();
+      $scope.reservation.checkOutDate.setDate(
+        $scope.reservation.checkInDate.getDate()+1);
+    }
+  }
+
+  $scope.setRentalCheckOutTime = function() {
+    $scope.reservation.rental.checkOutTime = $scope.reservation.checkOutTime; 
+    $scope.reservation.rental.$save();
+  }
+
+  $scope.setRentalCheckInTime = function() {
+    $scope.reservation.rental.checkInTime = $scope.reservation.checkInTime; 
+    $scope.reservation.rental.$save();
+  }
+
+  //temporary during dev
+  $scope.ratetooltip = "Here, we would either use the applicable rates above to calculate the total"+
+              " OR, choose another predefined set of rates for a different currency"+
+              " OR, override them with a single nightly rate below.";
+  $scope.extrapersontooltip = "TODO: Manager can set an extra charge for each "+
+              "additional person over a certain limit, which is less than the max";
 }

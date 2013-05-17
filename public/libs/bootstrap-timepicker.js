@@ -315,7 +315,7 @@
       case 'modal':
         template = '<div class="bootstrap-timepicker-widget modal hide fade in" data-backdrop="'+ (this.modalBackdrop ? 'true' : 'false') +'">'+
           '<div class="modal-header">'+
-            '<a href="#" class="close" data-dismiss="modal">×</a>'+
+            '<a href="#" class="close" data-dismiss="modal">Ã—</a>'+
             '<h3>Pick a Time</h3>'+
           '</div>'+
           '<div class="modal-content">'+
@@ -358,7 +358,7 @@
         }
       });
 
-      if (this.template === 'modal' && this.$widget.modal) {
+      if (this.template === 'modal') {
         this.$widget.modal('hide');
       } else {
         this.$widget.removeClass('open');
@@ -686,7 +686,7 @@
 
       this.updateFromElementVal();
 
-      if (this.template === 'modal' && this.$widget.modal) {
+      if (this.template === 'modal') {
         this.$widget.modal('show').on('hidden', $.proxy(this.hideWidget, this));
       } else {
         if (this.isOpen === false) {

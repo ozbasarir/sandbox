@@ -10,38 +10,126 @@
           .span2
             select(data-ng-model="reservation.rental",
                    data-ng-options="rental.name for rental in rentals",
-                   data-ng-change="")
+                   data-ng-change="initValues()")
               option(value="") Choose rental unit
-        .controls.controls-row
-          label Check-in:
-          input.span2(data-ng-model='reservation.checkinDate', 
-                          ui-date="dateOptions", 
-                          ui-date-format="DD, d MM, yy",
-                          placeholder='Date...')
-          .input-append.bootstrap-timepicker
-            input.span1(data-ng-model='reservation.checkinTime', 
-                          type="text",
-                          id="timepicker1",
-                          placeholder='Time...')
-            span.add-on
-              i.icon-time
-        .controls.controls-row
-          label Check-out:
-          input.span2(data-ng-model='reservation.checkoutDate', 
-                          ui-date="dateOptions", 
-                          ui-date-format="DD, d MM, yy",
-                          placeholder='Date...')
-          .input-append.bootstrap-timepicker
-            input.span1(data-ng-model='reservation.checkoutTime', 
-                        type="text", 
-                        id="timepicker2",
-                        placeholder='Time...')
-            span.add-on
-              i.icon-time
+        .controls(data-ng-show="reservation.rental")
+          .controls.controls-row
+            label.span1 Check-in:
+            .span3
+              input.span12(data-ng-model="reservation.checkInDate", 
+                           data-ui-date="dateOptions",
+                           data-ng-change="validateDates()")
+            .span3
+              .control-group.input-append
+                input.span7(data-ng-model="reservation.checkInTime", 
+                            bs-timepicker="",
+                            type="text")
+                button.btn(data-toggle="timepicker",
+                           type="button")
+                  i.icon-time
+            .span2
+              a(data-ng-show="reservation.rental.checkInTime!=reservation.checkInTime",
+                data-ng-click="setRentalCheckInTime()") 
+                p(tooltip="Use this check-in time for future reservations", 
+                  tooltip-placement="top") set default
 
-      .span8.offset4(data-ng-show="events")
-        .alert-success {{alertMessage}}
-        .calendar(data-ng-model="eventSources", 
-                  calendar="myCalendar", 
-                  config="uiConfig.calendar", 
-                  ui-calendar="uiConfig.calendar")
+            //- Incomplete: This is the calendar that would show only if we have conflict in schedule
+            //- NO Availability: then show inline error message and offer to show calendar 
+            //-   to the right(below in mobile). There should be option to see availability of 
+            //-   other units on the calendar as well. Maybe with a checkbox (located next to 
+            //-   the calendar) for each unit.
+            //- In following versions, we could be smart and offer availability options inline.
+            .span4(data-ng-show="events")
+                .alert-success {{alertMessage}}
+                .calendar(data-ng-model="eventSources", 
+                          calendar="myCalendar", 
+                          config="uiConfig.calendar", 
+                          ui-calendar="uiConfig.calendar")
+
+          .controls.controls-row
+            label.span1 Check-out:
+            .span3
+              input.span12(data-ng-model="reservation.checkOutDate", 
+                           data-ui-date="dateOptions", 
+                           data-ng-change="validateDates()")
+            .span3
+              .control-group.input-append
+                input.span7(data-ng-model="reservation.checkOutTime", 
+                            bs-timepicker="",
+                            type="text")
+                button.btn(data-toggle="timepicker",
+                           type="button")
+                  i.icon-time
+            .span2
+              a(data-ng-show="reservation.rental.checkOutTime!=reservation.checkOutTime",
+                data-ng-click="setRentalCheckOutTime()") 
+                p(tooltip="Use this check-out time for future reservations", 
+                  tooltip-placement="top") set default
+          .controls.controls-row
+            label.span1 Contract:
+            select.span3(data-ng-model="reservation.contract",
+                         data-ng-options="contract.name for contract in reservation.rental.contracts",
+                         data-ng-change="setAppliedRates()")
+          .controls.controls-row(tooltip="{{ratetooltip}}", 
+                                 tooltip-placement="top")
+            label.span3 Applicable rates: 
+            ul(data-ng-show="appliedRates.length")
+              li(data-ng-repeat="appliedRate in appliedRates")
+                p {{appliedRate}}
+            div(data-ng-show="!appliedRates.length") None found
+
+          .controls.controls-row
+            label.span1 Rate:
+            input.span1(data-ng-model="reservation.rate")
+
+          .controls.controls-row
+            label.span1 Adults:
+            input.span1(data-ng-model="reservation.adults")
+            label.span1 Kids:
+            input.span1(data-ng-model="reservation.kids")
+            label.span1 Max:
+            input.span1(data-ng-model="reservation.maxGuests")
+
+          .controls.controls-row.well(tooltip="{{extrapersontooltip}}",
+                                 tooltip-placement="top")
+            .span3 Total: {{numberOfNights*reservation.rate}}
+            .span3 Tax: {{taxRate*numberOfNights*reservation.rate}}
+            .span3 Total+Tax: {{(1+taxRate)*numberOfNights*reservation.rate}}
+
+          .controls.controls-row
+            label.span3 First Payment Due:
+            input.span1(data-ng-model="reservation.firstPaymentDue")
+          .controls.controls-row
+            label.span1 Date:
+            .span3
+              input.span12(data-ng-model="reservation.firstPaymentDueDate", 
+                           data-ui-date="dateOptions", 
+                           data-ng-change="validateFirstPaymentDueDate()")
+          .controls.controls-row
+            label.span3 Last Payment Due:
+            input.span1(data-ng-model="reservation.lastPaymentDue")
+          .controls.controls-row
+            label.span1 Date:
+            .span3
+              input.span12(data-ng-model="reservation.lastPaymentDueDate", 
+                           data-ui-date="dateOptions", 
+                           data-ng-change="validateLastPaymentDueDate()")
+
+          .controls.controls-row
+            label.span1 Source:
+            .span3
+              input.span12(data-ng-model="reservation.source")
+
+          .controls.controls-row(tooltip="these are the parameters specified in the contract",
+                                 tooltip-placement="top")
+            select.span3
+              option(value="") Choose parameter to set
+              option(value="1") parameter 1
+              option(value="2") parameter 2
+            .span3
+              input.span12(placeholder="custom parameters")
+              
+
+.well
+  p Debug Info:
+  pre {{reservation | json}}

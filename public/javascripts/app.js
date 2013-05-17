@@ -5,6 +5,7 @@ var rentalApp = angular.module('rentalApp', [
   'ui.bootstrap',
   'ui.calendar',
   'ui.date',
+  '$strap',//for timePicker
   'rentalApp.filters', 
   'rentalApp.services', 
   'rentalApp.directives',
@@ -225,7 +226,9 @@ rentalApp.factory('rentalModel', function() {
       {name: 'Standard - English',
        text: 'standard english template text'},
       {name: 'Standard - Russian',
-       text: 'standard russian template text'}
+       text: 'standard russian template text'},
+      {name: 'Standard - French',
+       text: 'standard french template text'}
     ];
   }
   
@@ -233,14 +236,18 @@ rentalApp.factory('rentalModel', function() {
     return [
     '##RENTAL_UNIT_NAME##',
     '##CHECK_IN_DATE##',
+    '##CHECK_IN_TIME##',
     '##CHECK_OUT_DATE##',
+    '##CHECK_OUT_TIME##',
     '##MAX_NUMBER_OF_GUESTS##'
     ];
   }
 
   var languages = function() {
     return {'English':0, 
-            'Russian':1};
+            'Russian':1,
+            'French':2
+            };
   }
 
   var rateTypes = function() {

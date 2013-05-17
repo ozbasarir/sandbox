@@ -53,6 +53,9 @@ exports.save = function(req, res, next) {
       if(req.body.contracts) {
         rental.contracts = req.body.contracts;
       }
+
+      rental.checkInTime = req.body.checkInTime;
+      rental.checkOutTime = req.body.checkOutTime;      
   
       rental.save( function(err, rental, count) {
         if (err) { 
