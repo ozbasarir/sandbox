@@ -313,14 +313,15 @@ function ReservationCtrl($scope, $routeParams, $rootScope, $location, rentalMode
   }
 
   $scope.setAppliedRates = function() {
+    $scope.appliedRates = [];
 
     //Collect the applicable rates based on the contract language
     var rates = $scope.reservation.rental.rates;
     var currency = ($scope.reservation.contract.language !== $scope.languages.FRENCH) ?
       //If language is not French, assume dollar is the currency
-      $.grep($scope.currencies, function(e){ return e.name == 'Dollars'; }) :
+      $.grep($scope.currencies, function(e){ return e.name == 'Dollars'; })[0] :
       //otherwise, assume euro is the currency
-      $.grep($scope.currencies, function(e){ return e.name == 'Euros'; });
+      $.grep($scope.currencies, function(e){ return e.name == 'Euros'; })[0];
 
     for (var i = rates.length - 1; i >= 0; i--) {
       if(rates[i].currency == currency.id) {
@@ -334,7 +335,9 @@ function ReservationCtrl($scope, $routeParams, $rootScope, $location, rentalMode
 
     if(!$scope.appliedRates.length){
       alert('This rental unit does not have a rate defined in the relevant currency.');
-    } 
+    }
+
+    $scope.currencySign = $scope.currencies[$scope.appliedRates[0].currency].sign;
   } 
    
   $scope.initValues = function() {
@@ -387,6 +390,10 @@ function ReservationCtrl($scope, $routeParams, $rootScope, $location, rentalMode
   $scope.setRentalCheckInTime = function() {
     $scope.reservation.rental.checkInTime = $scope.reservation.checkInTime; 
     $scope.reservation.rental.$save();
+  }
+
+  $scope.getNumberOfNights = function() {
+    return ($scope.reservation.checkOutDate - $scope.reservation.checkInDate)/86400000;
   }
 
   //temporary during dev

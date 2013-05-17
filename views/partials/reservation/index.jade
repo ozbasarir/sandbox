@@ -70,17 +70,6 @@
             select.span3(data-ng-model="reservation.contract",
                          data-ng-options="contract.name for contract in reservation.rental.contracts",
                          data-ng-change="setAppliedRates()")
-          .controls.controls-row(tooltip="{{ratetooltip}}", 
-                                 tooltip-placement="top")
-            label.span3 Applicable rates: 
-            ul(data-ng-show="appliedRates.length")
-              li(data-ng-repeat="appliedRate in appliedRates")
-                p {{appliedRate}}
-            div(data-ng-show="!appliedRates.length") None found
-
-          .controls.controls-row
-            label.span1 Rate:
-            input.span1(data-ng-model="reservation.rate")
 
           .controls.controls-row
             label.span1 Adults:
@@ -89,6 +78,25 @@
             input.span1(data-ng-model="reservation.kids")
             label.span1 Max:
             input.span1(data-ng-model="reservation.maxGuests")
+
+          .controls.controls-row(tooltip="{{ratetooltip}}", 
+                                 tooltip-placement="top")
+            label.span3 Applicable rates: 
+            ul(data-ng-show="appliedRates.length")
+              li(data-ng-repeat="appliedRate in appliedRates")
+                p {{appliedRate}}
+            div(data-ng-show="!appliedRates.length") None found
+
+          .controls.controls-row.input-prepend
+            label.span5.control-label() Override Rate:
+            span.add-on {{currencySign}}
+            input.span3(data-ng-model="reservation.rate")
+            .span3 per night for {{getNumberOfNights()}} nights
+
+          .controls.input-prepend.controls-row
+            label.span3 Additional Charges: (also add cleaning and extra free night options later)
+            span.add-on {{currencySign}}
+            input.span1(data-ng-model="additionalCharges")
 
           .controls.controls-row.well(tooltip="{{extrapersontooltip}}",
                                  tooltip-placement="top")
