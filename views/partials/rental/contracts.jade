@@ -1,12 +1,13 @@
 .row-fluid(data-ng-repeat="contract in rental.contracts")
-  .control-group.well.well-small
+  .control-group.well.well-small.well-contract
     .controls.controls-row
+      input.input-contract-title.span9(data-ng-model="contract.name",
+                  data-ng-disabled="!rental.name"
+                  placeholder="Title of contract",
+                  type="text")
       select.span3(data-ng-model="contract.language",
                    data-ng-disabled="!rental.name"
                    data-ng-options="key for (key,value) in languages")
-      input.span9(data-ng-model="contract.name",
-                  data-ng-disabled="!rental.name"
-                  placeholder="Title of contract")
     .controls.controls-row
       select.span6(data-ng-model="templateUsed",
                    data-ng-options="template.name for template in contractTemplates",
@@ -23,22 +24,23 @@
                       data-ng-disabled="!contract.name"
                       id="{{contract.name}}_txt",
                       maxlength="10000",
-                      rows="20")
+                      rows="12")
     .btn-group
       button.btn(data-ng-click="update()",
                  data-ng-disabled="!contract.name || !contract.text") Save
       button.btn.dropdown-toggle(data-toggle="dropdown",
-                                 data-ng-disabled="rental.contracts.length>1")
+                                 data-ng-disabled="rental.contracts.length<1")
         span.caret
       ul.dropdown-menu
         li.dropdown
           a(data-ng-click="deleteThisContract(contract)")
             p Delete this contract
 .row-fluid
-  a(data-ng-click="addAContract()",
+  a.btn(data-ng-click="addAContract()",
     data-ng-show="rental.contracts.length<10") 
-    p Add another contract
-
-.well
+    span Add another contract
+button.btn.btn-primary.rental-save.visible-phone(data-ng-click="update()",
+           data-ng-disabled="!rental.name") Save all changes
+.well.debug
   p Debug Info:
   pre {{rental | json}}
