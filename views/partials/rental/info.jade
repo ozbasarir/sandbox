@@ -1,16 +1,18 @@
 .row-fluid
-  .span2
+  .span4
     .control-group
       .controls
-        img.rental(data-ng-src="{{mainImageUrl}}")
-  .span3.offset2
+        img.rental-main-image(data-ng-src="{{mainImageUrl}}")
+  .span8
     .control-group
       .controls
-        label Rental Unit:
+        label.rental-name Rental Unit Name:
         input.input-med(data-ng-model='rental.name', 
                         type="text", 
-                        placeholder='Name', 
+                        placeholder='', 
                         id="pname")
-.well
+button.btn.btn-primary.rental-save.visible-phone(data-ng-click="update()",
+           data-ng-disabled="!rental.name") Save all changes
+.well.debug
   p Debug Info:
   pre {{rental | json}}

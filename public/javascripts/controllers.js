@@ -63,7 +63,7 @@ function RentalCtrl($scope, $routeParams, $rootScope, $location,
   if($scope.rental.images) {
     $scope.mainImageUrl = $scope.rental.images[0];
   } else {
-    $scope.mainImageUrl = "/images/for_rent.png";
+    $scope.mainImageUrl = "/images/studio.jpg";
   }
 
   $scope.setImage = function(imageUrl) {
@@ -76,7 +76,7 @@ function RentalCtrl($scope, $routeParams, $rootScope, $location,
         $scope.rental = savedRental;
 
         if(!$scope.rntlNotification) {
-          $scope.rntlNotification = "saved";
+          $scope.rntlNotification = "Changes have been saved";
           setTimeout(function(){
             $scope.$apply(function(){
                 $scope.$eval($scope.rntlNotification = undefined);
