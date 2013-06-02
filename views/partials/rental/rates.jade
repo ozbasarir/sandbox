@@ -1,129 +1,130 @@
 h4 Base Rate
-.control-group(data-ng-repeat="rate in rental.rates | filter:{type:rateTypes.BASE}")
-  .controls.input-prepend
-    label.control-label() Nightly
-    span.add-on {{currencies[rate.currency||0].sign}}
-    input.input-small(data-ng-model='rate.amount', 
-                      placeholder='Enter amount...',
-                      type="text")
-  .row-fluid
-    a(data-ng-click="deleteThisRate(rate)")
-      span Delete this rate
-
-.btn-group
-  button.btn.dropdown-toggle(data-toggle="dropdown") Add currency
+.well.well-small.well-rates(data-ng-repeat="rate in rental.rates | filter:{type:rateTypes.BASE}")
+  .control-group
+    .controls.input-prepend
+      label.control-label.nightly-label() Nightly
+      span.add-on {{currencies[rate.currency||0].sign}}
+      input.input-rate(data-ng-model='rate.amount', 
+                        placeholder='Enter amount...',
+                        type="text")
+    .row-fluid
+      span.h-divider <hr />
+      a(data-ng-click="deleteThisRate(rate)")
+        span.delete-rate Delete this rate
+.row-fluid.btn-group
+  button.btn.dropdown-toggle(data-toggle="dropdown") Add currency 
     span.caret
   ul.dropdown-menu
     li.dropdown(data-ng-repeat="currency in currencies",
                 data-ng-click="addAnotherRate(rateTypes.BASE, 'Nightly', currency.id)")
       a: {{currency.sign}} {{currency.name}}
-p
-hr
-p
-h4
-  span(tooltip="{{seasonalRateTip}}", tooltip-placement="right") Seasonal Rate
-.control-group.well.well-small(data-ng-repeat="rate in rental.rates | filter:{type:rateTypes.SEASONAL}")
-  .controls.controls-row
-    .span7
-      input.input-large(data-ng-model='rate.name',
+h4.seasonal-rate
+  span(tooltip="{{seasonalRateTip}}", tooltip-placement="right") Seasonal Rate <i class="icon-info-sign icon-in-h4"></i>
+.well.well-small.well-rates(data-ng-repeat="rate in rental.rates | filter:{type:rateTypes.SEASONAL}")
+  .row-fluid
+    .span8.season-event
+      input.input-season-name.span12(data-ng-model='rate.name',
                         placeholder='Season name...', 
                         type="text")
       .control-group
-        select.input-mini(
+        select.input-month(
           data-ng-model="rate.from.month",
           data-ng-options="month for month in months")
           option(value="") Month
-        select.input-mini(
+        select.input-day(
           data-ng-model="rate.from.day",
           data-ng-disabled="!rate.from.month",
           data-ng-options="day for day in daysInMonth(rate.from.month)")
           option(value="") Day
-        span &nbsp;to&nbsp;
-        select.input-mini(
+        span.input-helper to
+        span.line-break.visible-tablet.visible-phone <br />
+        select.input-month(
           data-ng-model="rate.to.month",
           data-ng-options="month for month in months")
           option(value="") Month
-        select.input-mini(
+        select.input-day(
           data-ng-model="rate.to.day",
           data-ng-disabled="!rate.to.month",
           data-ng-options="day for day in daysInMonth(rate.to.month)")
           option(value="") Day
-        span &nbsp; each year
-    .span5
+        span.line-break.visible-phone <br />
+        span.input-helper.each-year each year
+        span.h-divider.visible-phone <hr />
+    .span4
       .controls.input-prepend
-        label.control-label() Nightly
+        label.control-label.nightly-label() Nightly
         span.add-on {{currencies[rate.currency].sign}}
-        input.input-small(data-ng-model='rate.amount', type="text")
+        input.input-rate(data-ng-model='rate.amount', type="text")
   .row-fluid
+    span.h-divider <hr />
     a(data-ng-click="deleteThisRate(rate)")
-      span Delete this season
+      span.delete-rate Delete this season
 .row-fluid.btn-group
-  button.btn.dropdown-toggle(data-toggle="dropdown") Add seasonal rate
+  button.btn.dropdown-toggle(data-toggle="dropdown") Add seasonal rate 
     span.caret
   ul.dropdown-menu
     li.dropdown(data-ng-repeat="currency in currencies",
                 data-ng-click="addAnotherRate(rateTypes.SEASONAL, null, currency.id)")
       a: {{currency.sign}} {{currency.name}}
-p
-hr
-p
-h4
-  span(tooltip="{{eventRateTip}}", tooltip-placement="right") Event Rate
-.control-group.well.well-small(data-ng-repeat="rate in rental.rates | filter:{type:rateTypes.EVENT}")
-  .controls.controls-row
-    .span7
-      input.input-large(data-ng-model='rate.name',
+h4.event-rate
+  span(tooltip="{{eventRateTip}}", tooltip-placement="right") Event Rate <i class="icon-info-sign icon-in-h4"></i>
+.well.well-small.well-rates(data-ng-repeat="rate in rental.rates | filter:{type:rateTypes.EVENT}")
+  .row-fluid
+    .span8.season-event
+      input.input-season-name.span12(data-ng-model='rate.name',
                         placeholder='Event name...', 
                         type="text")
       .control-group
-        select.input-mini(data-ng-model="rate.from.year")
+        select.input-year(data-ng-model="rate.from.year")
           option(value="") Year
           option(value="2013") 2013
           option(value="2014") 2014
           option(value="2015") 2015
-        select.input-mini(
+        select.input-month(
           data-ng-model="rate.from.month",
           data-ng-options="month for month in months")
           option(value="") Month
-        select.input-mini(
+        select.input-day(
           data-ng-model="rate.from.day",
           data-ng-disabled="!rate.from.month",
           data-ng-options="day for day in daysInMonth(rate.from.month)")
           option(value="") Day
-        span &nbsp;to&nbsp;
-        select.input-mini(data-ng-model="rate.to.year")
+        span.input-helper to
+        span.line-break.visible-tablet <br />
+        span.line-break.visible-phone <br />
+        select.input-year(data-ng-model="rate.to.year")
           option(value="") Year
           option(value="2013") 2013
           option(value="2014") 2014
           option(value="2015") 2015
-        select.input-mini(
+        select.input-month(
           data-ng-model="rate.to.month",
           data-ng-options="month for month in months")
           option(value="") Month
-        select.input-mini(
+        select.input-day(
           data-ng-model="rate.to.day",
           data-ng-disabled="!rate.to.month",
           data-ng-options="day for day in daysInMonth(rate.to.month)")
           option(value="") Day
-    .span5
+        span.h-divider.visible-phone <hr />
+    .span4
       .controls.input-prepend
-        label.control-label() Nightly
+        label.control-label.nightly-label() Nightly
         span.add-on {{currencies[rate.currency].sign}}
-        input.input-small(data-ng-model='rate.amount', type="text")
+        input.input-rate(data-ng-model='rate.amount', type="text")
   .row-fluid
+    span.h-divider <hr />
     a(data-ng-click="deleteThisRate(rate)")
-      span Delete this event
+      span.delete-rate Delete this event
 .row-fluid.btn-group
-  button.btn.dropdown-toggle(data-toggle="dropdown") Add event rate
+  button.btn.dropdown-toggle(data-toggle="dropdown") Add event rate 
     span.caret
   ul.dropdown-menu
     li.dropdown(data-ng-repeat="currency in currencies",
                 data-ng-click="addAnotherRate(rateTypes.EVENT, null, currency.id)")
       a: {{currency.sign}} {{currency.name}}
-p
-hr
-p
-
-.well
+button.btn.btn-primary.rental-save.visible-phone(data-ng-click="update()",
+           data-ng-disabled="!rental.name") Save all changes
+.well.debug
   p Debug Info:
   pre {{rental | json}}

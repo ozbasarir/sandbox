@@ -4,6 +4,8 @@ html(lang='en', data-ng-app='rentalApp')
     include ../views/includes/head
   body
     include ../views/includes/navigation
-    .row-fluid
-      div(data-ng-view)
+    .container
+      .row
+        .span10.offset1
+          div(data-ng-view)
     include ../views/includes/footer
